@@ -135,6 +135,9 @@ export function Dashboard() {
             {data?.meta.fileName && <span>{data.meta.fileName} · </span>}
             Pestañas leídas: {data?.meta.sheets.join(", ")}
             {!!data?.meta.duplicatesRemoved && <span> · {data.meta.duplicatesRemoved} filas duplicadas entre pestañas omitidas</span>}
+            <span className="mt-1 block">
+              Solo se muestran países de Centroamérica. CAM = campañas regionales repartidas entre varios países.
+            </span>
           </footer>
         </main>
       ) : null}

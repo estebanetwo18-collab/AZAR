@@ -3,7 +3,31 @@ import { countryInfo } from "@/lib/countries";
 import { cn } from "./ui";
 
 /** Banderas simplificadas en SVG (sin dependencias ni imágenes externas). */
+const blueWhiteBlue = (blue: string, center?: React.ReactNode) => (
+  <>
+    <rect width="30" height="20" fill={blue} />
+    <rect y="6.67" width="30" height="6.66" fill="#fff" />
+    {center}
+  </>
+);
+
 const FLAGS: Record<string, React.ReactNode> = {
+  SV: blueWhiteBlue("#0F47AF", <circle cx="15" cy="10" r="1.8" fill="#F7E214" opacity="0.8" />),
+  NI: blueWhiteBlue("#0067C6", <circle cx="15" cy="10" r="1.8" fill="none" stroke="#C8A400" strokeWidth="0.7" />),
+  PA: (
+    <>
+      <rect width="30" height="20" fill="#fff" />
+      <rect x="15" width="15" height="10" fill="#DA121A" />
+      <rect y="10" width="15" height="10" fill="#072357" />
+    </>
+  ),
+  BZ: (
+    <>
+      <rect width="30" height="20" fill="#CE1126" />
+      <rect y="1.5" width="30" height="17" fill="#003F87" />
+      <circle cx="15" cy="10" r="4" fill="#fff" />
+    </>
+  ),
   CR: (
     <>
       <rect width="30" height="20" fill="#002B7F" />
@@ -16,21 +40,6 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect width="30" height="20" fill="#4997D0" />
       <rect x="10" width="10" height="20" fill="#fff" />
       <circle cx="15" cy="10" r="2.6" fill="#6C9B3A" opacity="0.85" />
-    </>
-  ),
-  PY: (
-    <>
-      <rect width="30" height="20" fill="#D52B1E" />
-      <rect y="6.67" width="30" height="6.66" fill="#fff" />
-      <rect y="13.33" width="30" height="6.67" fill="#0038A8" />
-      <circle cx="15" cy="10" r="2.2" fill="none" stroke="#0038A8" strokeWidth="0.8" />
-    </>
-  ),
-  ARG: (
-    <>
-      <rect width="30" height="20" fill="#74ACDF" />
-      <rect y="6.67" width="30" height="6.66" fill="#fff" />
-      <circle cx="15" cy="10" r="2" fill="#F6B40E" />
     </>
   ),
   HN: (

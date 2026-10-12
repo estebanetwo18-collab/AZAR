@@ -10,10 +10,13 @@ export interface CountryInfo {
 const KNOWN: Record<string, CountryInfo> = {
   CR: { key: "CR", name: "Costa Rica", label: "CR", icon: "flag" },
   GT: { key: "GT", name: "Guatemala", label: "GT", icon: "flag" },
-  PY: { key: "PY", name: "Paraguay", label: "PY", icon: "flag" },
-  ARG: { key: "ARG", name: "Argentina", label: "ARG", icon: "flag" },
   HN: { key: "HN", name: "Honduras", label: "HN", icon: "flag" },
-  CAM: { key: "CAM", name: "Centroamérica", label: "CAM", icon: "globe" },
+  SV: { key: "SV", name: "El Salvador", label: "SV", icon: "flag" },
+  NI: { key: "NI", name: "Nicaragua", label: "NI", icon: "flag" },
+  PA: { key: "PA", name: "Panamá", label: "PA", icon: "flag" },
+  BZ: { key: "BZ", name: "Belice", label: "BZ", icon: "flag" },
+  // CAM = campañas regionales: una misma campaña repartida entre varios países de Centroamérica.
+  CAM: { key: "CAM", name: "CAM (regional)", label: "CAM", icon: "globe" },
 };
 
 const ALIASES: Record<string, string> = {
@@ -21,18 +24,28 @@ const ALIASES: Record<string, string> = {
   cr: "CR",
   guatemala: "GT",
   gt: "GT",
-  paraguay: "PY",
-  py: "PY",
-  argentina: "ARG",
-  arg: "ARG",
-  ar: "ARG",
   honduras: "HN",
   hondura: "HN",
   hn: "HN",
   cam: "CAM",
   centroamerica: "CAM",
   "centro america": "CAM",
+  "el salvador": "SV",
+  salvador: "SV",
+  sv: "SV",
+  nicaragua: "NI",
+  ni: "NI",
+  panama: "PA",
+  pa: "PA",
+  belice: "BZ",
+  belize: "BZ",
+  bz: "BZ",
 };
+
+/** El dashboard solo muestra Centroamérica (países + CAM regional). Otros países se excluyen. */
+export function isCentralAmerica(key: string): boolean {
+  return key in KNOWN;
+}
 
 export function stripAccents(s: string): string {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -68,17 +81,19 @@ export function countryInfo(key: string, fallbackName?: string): CountryInfo {
 
 /** Colores por país, derivados de la paleta de marca. */
 const COUNTRY_COLORS: Record<string, string> = {
-  PY: "#E85A1E",
-  ARG: "#0A0A0A",
+  CAM: "#E85A1E",
   CR: "#F59E0B",
   GT: "#A0522D",
-  CAM: "#FF6A13",
-  HN: "#9CA3AF",
+  HN: "#0A0A0A",
+  SV: "#FDBA74",
+  NI: "#78350F",
+  PA: "#9CA3AF",
+  BZ: "#C2410C",
 };
 const EXTRA_COLORS = ["#FDBA74", "#78350F", "#57534E", "#C2410C", "#D6D3D1", "#B45309"];
 
 export function countryColor(key: string, index = 0, dark = false): string {
   // El negro de marca no se ve sobre fondo oscuro: se aclara en modo oscuro.
-  if (dark && key === "ARG") return "#E7E5E4";
+  if (dark && key === "HN") return "#E7E5E4";
   return COUNTRY_COLORS[key] ?? EXTRA_COLORS[index % EXTRA_COLORS.length];
 }

@@ -5,7 +5,7 @@ export const DEFAULT_FILTERS: Filters = {
   countries: [],
   types: [],
   accounts: [],
-  currency: "USD",
+  currency: "UYU",
   groupBy: "day",
 };
 
@@ -38,7 +38,7 @@ export function filtersFromParams(p: URLSearchParams): Filters {
     countries: list(p.get("pais")),
     types: list(p.get("tipo")),
     accounts: list(p.get("cuenta")),
-    currency: cur === "UYU" ? "UYU" : "USD",
+    currency: cur === "USD" ? "USD" : "UYU",
     groupBy: group === "week" || group === "month" ? group : "day",
   };
 }
@@ -53,7 +53,7 @@ export function filtersToParams(f: Filters): URLSearchParams {
   if (f.countries.length) p.set("pais", f.countries.join(","));
   if (f.types.length) p.set("tipo", f.types.join(","));
   if (f.accounts.length) p.set("cuenta", f.accounts.join(","));
-  if (f.currency !== "USD") p.set("moneda", f.currency);
+  if (f.currency !== DEFAULT_FILTERS.currency) p.set("moneda", f.currency);
   if (f.groupBy !== "day") p.set("agrupar", f.groupBy);
   return p;
 }

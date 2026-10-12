@@ -1,4 +1,4 @@
-import { resolveCountry, stripAccents } from "./countries";
+import { isCentralAmerica, resolveCountry, stripAccents } from "./countries";
 import type { Movement } from "./types";
 
 /** Tabla cruda: nombre de la pestaña + matriz de celdas (fila 1 = encabezados). */
@@ -115,6 +115,8 @@ export interface ParseResult {
   rows: Movement[];
   sheets: string[];
   duplicatesRemoved: number;
+  /** Filas de países fuera de Centroamérica (no se muestran). */
+  excludedOtherCountries: number;
 }
 
 /**
@@ -128,6 +130,7 @@ export function parseTables(tables: RawTable[]): ParseResult {
   const sheets: string[] = [];
   const perKey = new Map<string, { count: number; rows: Movement[] }>();
   let totalCandidates = 0;
+  let excluded = 0;
 
   for (const table of tables) {
     const cols = detectColumns(table.rows[0]);
@@ -146,6 +149,10 @@ export function parseTables(tables: RawTable[]): ParseResult {
       if (!date || !countryRaw || (uyu === null && usd === null)) continue;
 
       const { key, name } = resolveCountry(countryRaw);
+      if (!isCentralAmerica(key)) {
+        excluded++;
+        continue;
+      }
       sheetRows.push({
         id: "",
         date,
@@ -181,7 +188,7 @@ export function parseTables(tables: RawTable[]): ParseResult {
   rows.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.invoice.localeCompare(b.invoice)));
   rows.forEach((r, i) => (r.id = `${r.invoice || "row"}-${i}`));
 
-  return { rows, sheets, duplicatesRemoved: totalCandidates - rows.length };
+  return { rows, sheets, duplicatesRemoved: totalCandidates - rows.length, excludedOtherCountries: excluded };
 }
 
 /** Si una fila solo trae una moneda, se completa con la tasa mediana del resto de filas. */

@@ -1,6 +1,6 @@
 # Azar Latino · Control de inversión
 
-Dashboard web para controlar la inversión en cuentas publicitarias de Meta Ads de Azar Latino, por país, tipo y cuenta. Lee los datos **en vivo** desde un archivo de Google Drive (Google Sheet nativo o `.xlsx`) y se despliega en Vercel.
+Dashboard web para controlar la inversión en cuentas publicitarias de Meta Ads de Azar Latino, **en Centroamérica**, por país, tipo y cuenta. Lee los datos **en vivo** desde un archivo de Google Drive (Google Sheet nativo o `.xlsx`) y se despliega en Vercel.
 
 > Los datos son de cuentas de **Meta Ads**; el archivo se lee desde Google Drive con una Service Account de Google, por eso se usan las APIs de Google.
 
@@ -28,7 +28,9 @@ Abre http://localhost:3000. Si faltan `GOOGLE_SERVICE_ACCOUNT_EMAIL` / `GOOGLE_P
    - El archivo actual tiene **varias** pestañas con ese formato (CAM OVERVIEW, PYARG, Agosto, GUATEMALA…), y algunas repiten filas (p. ej. "Agosto" duplica parte de "PYARG"). Se combinan todas y se **deduplican por factura + fecha + importe**. El pie del dashboard muestra qué pestañas se leyeron y cuántos duplicados se omitieron.
 3. Se leen todas las filas aunque estén ocultas o filtradas; se ignoran filas vacías y filas con "TOTAL".
 4. Importes: se quitan `$U`, `$` y comas. Fechas `dd/mm/yyyy` o seriales de Excel, sin desfase horario ("hoy" se calcula en `America/Costa_Rica`). El ID de la cuenta siempre se trata como texto.
-5. La API cachea los datos 60 s; el navegador refresca cada 60 s y el botón **Actualizar ahora** fuerza una lectura nueva.
+5. **Solo Centroamérica**: se muestran Costa Rica, Guatemala, Honduras, El Salvador, Nicaragua, Panamá, Belice y **CAM** (campañas regionales repartidas entre varios países de Centroamérica, que se muestran como una categoría propia). Las filas de otros países (Paraguay, Argentina, etc.) se excluyen en el servidor y nunca llegan al navegador. La lista está en `lib/countries.ts`.
+6. **Moneda**: por defecto todo se muestra en pesos uruguayos (UYU). El switch "Pesos $U / Dólares US$" cambia todos los montos y gráficos a dólares (columna Importe USD).
+7. La API cachea los datos 60 s; el navegador refresca cada 60 s y el botón **Actualizar ahora** fuerza una lectura nueva.
 
 ## Configurar Google Cloud (Service Account)
 
@@ -84,7 +86,7 @@ vercel --prod
 
 ## Uso
 
-- **Filtros** (barra superior, se guardan en la URL para compartir vistas): rango de fechas con presets, países (multiselección con banderas), tipo, cuenta (con búsqueda), moneda USD/UYU y agrupación Día/Semana/Mes. Los filtros activos aparecen como chips removibles; "Limpiar filtros" los quita todos.
+- **Filtros** (barra superior, se guardan en la URL para compartir vistas): rango de fechas con presets, países (multiselección con banderas), tipo, cuenta (con búsqueda), moneda Pesos/Dólares (por defecto pesos uruguayos) y agrupación Día/Semana/Mes. Los filtros activos aparecen como chips removibles; "Limpiar filtros" los quita todos.
 - Clic en una mini-tarjeta de país o en una cuenta del ranking para filtrar por ella.
 - Las variaciones % comparan con el período anterior equivalente (mismo largo, inmediatamente antes; "Este mes" se compara con el mes anterior hasta el mismo día).
 - **Exportar CSV** descarga los movimientos filtrados (con importes en UYU y USD).

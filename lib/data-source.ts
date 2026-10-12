@@ -159,6 +159,7 @@ async function load(): Promise<DataPayload> {
       sheets: parsed.sheets,
       fetchedAt: new Date().toISOString(),
       duplicatesRemoved: parsed.duplicatesRemoved,
+      excludedOtherCountries: parsed.excludedOtherCountries,
     },
   };
 }

@@ -12,14 +12,14 @@ function rng(seed: number) {
 }
 
 const COUNTRIES: { name: string; weight: number; accounts: string[] }[] = [
-  { name: "Paraguay", weight: 0.4, accounts: ["P70", "P310", "P339", "P354", "P114", "P22", "P265"] },
-  { name: "Argentina ", weight: 0.25, accounts: ["P284", "P301", "P318", "P327"] },
-  { name: "Costa Rica", weight: 0.12, accounts: ["P344", "P345", "P346", "P349"] },
-  { name: "Guatemala", weight: 0.1, accounts: ["P392", "P398", "P287"] },
-  { name: "CAM", weight: 0.08, accounts: ["P321", "P287"] },
-  { name: "Honduras", weight: 0.05, accounts: ["P410", "P411"] },
+  { name: "CAM", weight: 0.35, accounts: ["P321", "P287", "P282"] },
+  { name: "Costa Rica", weight: 0.25, accounts: ["P344", "P345", "P346", "P349"] },
+  { name: "Guatemala", weight: 0.25, accounts: ["P392", "P398", "P347", "P329"] },
+  { name: "Honduras", weight: 0.1, accounts: ["P410", "P411"] },
+  // Debe quedar excluido: el dashboard solo muestra Centroamérica.
+  { name: "Paraguay", weight: 0.05, accounts: ["P70"] },
 ];
-const TYPES = ["REGISTRO DIRECTO", "REGISTRO DIRECTO", "REGISTRO DIRECTO", "CALLCENTER", "QUION"];
+const TYPES = ["REGISTRO DIRECTO", "REGISTRO DIRECTO", "REGISTRO DIRECTO", "CALLCENTER"];
 const AMOUNTS = [3000, 5000, 5000, 10000, 10000, 12000, 15000, 20000, 25000, 30000];
 const RATE = 0.0248757;
 
@@ -44,7 +44,7 @@ export function mockTables(today: string): RawTable[] {
   for (let back = 120; back >= 0; back--) {
     const t = new Date(end - back * 86400000);
     const weekend = t.getUTCDay() === 0 || t.getUTCDay() === 6;
-    const n = Math.floor(rand() * (weekend ? 4 : 11)) + (weekend ? 0 : 2);
+    const n = Math.floor(rand() * (weekend ? 3 : 6)) + (weekend ? 0 : 1);
     for (let i = 0; i < n; i++) {
       let r = rand();
       const c = COUNTRIES.find((x) => (r -= x.weight) < 0) ?? COUNTRIES[0];

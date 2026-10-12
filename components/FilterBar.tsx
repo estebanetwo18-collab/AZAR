@@ -258,8 +258,8 @@ export function FilterBar({ filters, options, range, onChange, onClear }: Props)
             value={filters.currency}
             onChange={(currency) => onChange({ currency })}
             options={[
-              { value: "USD", label: "USD" },
-              { value: "UYU", label: "UYU" },
+              { value: "UYU", label: "Pesos $U" },
+              { value: "USD", label: "Dólares US$" },
             ]}
           />
           <Segmented

@@ -4,7 +4,7 @@ export interface Movement {
   id: string;
   /** Fecha ISO yyyy-mm-dd (sin hora ni zona horaria). */
   date: string;
-  /** Clave de país normalizada (CR, GT, PY, ARG, HN, CAM u otra en mayúsculas). */
+  /** Clave de país normalizada (CR, GT, HN, SV, NI, PA, BZ o CAM = campañas regionales). */
   country: string;
   /** Nombre del país para mostrar. */
   countryName: string;
@@ -29,6 +29,8 @@ export interface DataPayload {
     fetchedAt: string;
     /** Filas descartadas por duplicadas entre pestañas. */
     duplicatesRemoved: number;
+    /** Filas de otros países (fuera de Centroamérica) que se excluyeron. */
+    excludedOtherCountries: number;
   };
 }
 

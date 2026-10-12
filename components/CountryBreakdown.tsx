@@ -26,6 +26,7 @@ export function CountryBreakdown({
       <div id="paises" className="scroll-mt-48" />
       <CardTitle
         title="Inversión por país"
+        right={<span className="rounded-full bg-card-muted px-2.5 py-1 text-xs text-muted">Centroamérica</span>}
         subtitle="Clic en un país para filtrar todo el dashboard"
       />
       {countries.length === 0 ? (
@@ -75,6 +76,7 @@ export function CountryBreakdown({
                   />
                 </div>
                 <p className="mt-2 text-xs text-muted">
+                  {c.key === "CAM" ? "Campañas multipaís · " : ""}
                   {formatInt(c.accounts)} {c.accounts === 1 ? "cuenta" : "cuentas"} · {formatInt(c.count)} recargas
                 </p>
               </motion.button>
