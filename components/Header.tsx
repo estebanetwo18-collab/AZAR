@@ -31,7 +31,7 @@ export function Header({ meta, refreshing, onRefresh, dark, onToggleTheme, child
                 Azar Latino <span className="font-normal text-white/50">· Control de inversión</span>
               </p>
               <p className="truncate text-xs text-white/45">
-                Google Ads
+                Meta Ads
                 {meta?.source === "mock" && <span className="ml-2 rounded-full bg-azar/20 px-2 py-0.5 text-[10px] font-medium text-azar-200">Datos de ejemplo</span>}
               </p>
             </div>

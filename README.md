@@ -1,6 +1,8 @@
 # Azar Latino · Control de inversión
 
-Dashboard web para controlar la inversión en cuentas publicitarias de Google Ads de Azar Latino, por país, tipo y cuenta. Lee los datos **en vivo** desde un archivo de Google Drive (Google Sheet nativo o `.xlsx`) y se despliega en Vercel.
+Dashboard web para controlar la inversión en cuentas publicitarias de Meta Ads de Azar Latino, por país, tipo y cuenta. Lee los datos **en vivo** desde un archivo de Google Drive (Google Sheet nativo o `.xlsx`) y se despliega en Vercel.
+
+> Los datos son de cuentas de **Meta Ads**; el archivo se lee desde Google Drive con una Service Account de Google, por eso se usan las APIs de Google.
 
 - Next.js 15 (App Router) + TypeScript + Tailwind CSS 4
 - Recharts, Framer Motion, lucide-react, fuente Geist

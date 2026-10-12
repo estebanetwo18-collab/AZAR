@@ -46,7 +46,7 @@ export default function LoginPage() {
         <div className="mb-8 flex flex-col items-center text-center text-white">
           <Image src="/logo.png" alt="Azar Latino" width={88} height={88} priority className="h-[88px] w-[88px] rounded-3xl shadow-2xl shadow-black/40 ring-1 ring-white/15" />
           <h1 className="mt-5 text-2xl font-semibold tracking-tight">Azar Latino</h1>
-          <p className="mt-1 text-sm text-white/60">Control de inversión · Google Ads</p>
+          <p className="mt-1 text-sm text-white/60">Control de inversión · Meta Ads</p>
         </div>
         <form onSubmit={submit} className="rounded-3xl border border-white/10 bg-ink/70 p-6 shadow-2xl backdrop-blur-xl">
           <label htmlFor="password" className="text-sm font-medium text-white/80">

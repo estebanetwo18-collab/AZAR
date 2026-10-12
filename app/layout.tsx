@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Azar Latino · Control de inversión",
-  description: "Inversión en cuentas publicitarias de Google Ads por país, tipo y cuenta.",
+  description: "Inversión en cuentas publicitarias de Meta Ads por país, tipo y cuenta.",
   robots: { index: false, follow: false },
 };
 
