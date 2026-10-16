@@ -1,26 +1,50 @@
-import { resolveCountry } from "./countries";
 import type { Currency } from "./types";
 
-/** Fila consolidada del reporte de pauta de Meta Ads (consumo en UYU). */
+/**
+ * Pauta de Meta Ads de octubre (réplica del dashboard "Pauta Octubre Azar Latino").
+ * Mismo criterio que el original: semana 1 = 5–11 oct (7 días), semana 2 = 12–16 oct (5 días),
+ * variaciones solo con la base comparable (cuentas con consumo en ambas semanas).
+ */
+
+export type Bucket = "pre" | "w1" | "w2" | "nosplit";
+
 export interface PautaRow {
   id: string;
   cuenta: string;
-  /** "CAM" (campañas regionales) o "Individual". */
+  /** "CAM" o "Individual". */
   tipo: string;
   pais: string;
-  /** pre = 1–4 oct · w1 = semana 1 (5–11) · w2 = semana 2 (12–16). */
-  bucket: "pre" | "w1" | "w2";
+  bucket: Bucket;
   /** yyyy-mm-dd; null en los reportes semanales sin desglose diario (P282). */
   dia: string | null;
   periodo: string;
   campana: string;
   cuentaPublicitaria: string | null;
   archivo: string;
+  fila: number;
   consumo: number;
   impresiones: number | null;
   alcance: number | null;
   resultados: number | null;
   tipoResultado: string | null;
+}
+
+export interface OriginalRow {
+  id: string;
+  archivo: string;
+  hoja: string;
+  fila: number;
+  cuentaPublicitaria: string | null;
+  campana: string;
+  dia: string | null;
+  inicioInforme: string;
+  finInforme: string;
+  consumo: number;
+  impresiones: number;
+  alcance: number;
+  resultados: number | null;
+  estado: string;
+  duplicado: number | null;
 }
 
 export interface AuditNote {
@@ -36,149 +60,211 @@ export interface PautaPayload {
   corte: string;
   moneda: "UYU";
   tipoCambio: { fecha: string; uyu_por_usd: number; referencia: string };
-  semanas: Record<"pre" | "w1" | "w2", { label: string; dias: number }>;
   filas: PautaRow[];
   auditoria: AuditNote[];
+  originales: OriginalRow[];
 }
+
+export type Periodo = "all" | "w1" | "w2" | "pre";
+export type Metrica = "c" | "i";
 
 export interface PautaFilters {
-  pais: string; // "all" o clave de país (CR, GT, HN)
+  periodo: Periodo;
+  pais: string; // "all" o nombre ("Costa Rica")
+  cuenta: string; // "all" o código
   tipo: string; // "all" | "CAM" | "Individual"
-  cuenta: string; // "all" o código de cuenta
   currency: Currency;
+  metrica: Metrica;
 }
 
-export const countryKey = (pais: string) => resolveCountry(pais).key;
+export const DEFAULT_PAUTA_FILTERS: PautaFilters = {
+  periodo: "all",
+  pais: "all",
+  cuenta: "all",
+  tipo: "all",
+  currency: "UYU",
+  metrica: "c",
+};
 
-export function filterPauta(rows: PautaRow[], f: PautaFilters) {
-  return rows.filter(
-    (r) =>
-      (f.pais === "all" || countryKey(r.pais) === f.pais) &&
-      (f.tipo === "all" || r.tipo === f.tipo) &&
-      (f.cuenta === "all" || r.cuenta === f.cuenta),
-  );
+export const PAISES = ["Costa Rica", "Guatemala", "Honduras"];
+export const DIAS_S1 = 7;
+export const DIAS_S2 = 5;
+
+export const PERIODO_LABEL: Record<Periodo, string> = {
+  all: "Octubre 1–16",
+  w1: "5–11 oct",
+  w2: "12–16 oct",
+  pre: "1–4 oct",
+};
+
+/** Valor de una fila según la métrica y moneda elegidas. */
+export function valueOf(r: PautaRow, f: Pick<PautaFilters, "metrica" | "currency">, rate: number): number {
+  if (f.metrica === "i") return r.impresiones ?? 0;
+  return f.currency === "USD" ? r.consumo / rate : r.consumo;
 }
 
-/** Convierte un monto UYU a la moneda elegida con el tipo de cambio del reporte. */
-export const toCurrency = (uyu: number, currency: Currency, rate: number) => (currency === "USD" ? uyu / rate : uyu);
+const sum = (rows: PautaRow[], fn: (r: PautaRow) => number) => rows.reduce((a, r) => a + (fn(r) || 0), 0);
 
-const sum = <T,>(rows: T[], fn: (r: T) => number | null | undefined) => rows.reduce((a, r) => a + (fn(r) ?? 0), 0);
+/** Cuentas con consumo en ambas semanas, sobre todos los datos (igual que el original). */
+export function comparables(all: PautaRow[]): string[] {
+  const cuentas = [...new Set(all.map((r) => r.cuenta))].sort();
+  return cuentas.filter((c) => (["w1", "w2"] as Bucket[]).every((b) => all.some((r) => r.cuenta === c && r.bucket === b)));
+}
 
-export function pautaSummary(rows: PautaRow[], p: PautaPayload) {
-  const consumo = sum(rows, (r) => r.consumo);
-  const impresiones = sum(rows, (r) => r.impresiones);
-  const byBucket = (b: PautaRow["bucket"], set = rows) => sum(set.filter((r) => r.bucket === b), (r) => r.consumo);
+export function match(r: PautaRow, pais: string, cuenta: string, tipo: string) {
+  return (pais === "all" || r.pais === pais) && (cuenta === "all" || r.cuenta === cuenta) && (tipo === "all" || r.tipo === tipo);
+}
 
-  // El ritmo usa todas las cuentas, incluidas las que empezaron en la semana 2 (P345).
-  const cuentas = [...new Set(rows.map((r) => r.cuenta))];
-  const w1 = byBucket("w1");
-  const w2 = byBucket("w2");
-  const promW1 = w1 / p.semanas.w1.dias;
-  const promW2 = w2 / p.semanas.w2.dias;
-  /** Cuentas sin consumo en la semana 1 que suman solo en la semana 2. */
-  const nuevasW2 = cuentas.filter((c) => {
-    const rs = rows.filter((r) => r.cuenta === c);
-    return byBucket("w1", rs) === 0 && byBucket("w2", rs) > 0;
-  });
+export interface Stats {
+  w1: number;
+  w2: number;
+  pre: number;
+  nosplit: number;
+  total: number;
+  /** Base comparable. */
+  cc_w1: number;
+  cc_w2: number;
+  prom_w1: number;
+  prom_w2: number;
+  promc_w1: number;
+  promc_w2: number;
+  dif_ritmo: number | null;
+  var_abs: number | null;
+  var_pct: number | null;
+  var_ritmo: number | null;
+  /** Variación de ritmo con todas las cuentas (incluye las nuevas en semana 2, p. ej. P345). */
+  var_ritmo_todas: number | null;
+  proy_s2: number | null;
+  /** CPM por periodo (sobre consumo en la moneda elegida). */
+  cpm: Record<"w1" | "w2" | "pre" | "total" | "cc_w1" | "cc_w2", number | null>;
+  impresiones: Record<"w1" | "w2" | "pre" | "total" | "cc_w1" | "cc_w2", number>;
+  n_cuentas: (b: Periodo) => number;
+  n_paises: (b: Periodo) => number;
+  paises: string[];
+  /** Por qué no tiene variación (cuando aplica). */
+  nota_var: string;
+  get: (p: Periodo) => number;
+}
 
-  const resultTypes = new Map<string, { resultados: number; consumo: number }>();
-  for (const r of rows) {
-    if (!r.tipoResultado || r.resultados === null) continue;
-    const e = resultTypes.get(r.tipoResultado) ?? { resultados: 0, consumo: 0 };
-    e.resultados += r.resultados;
-    e.consumo += r.consumo;
-    resultTypes.set(r.tipoResultado, e);
+export function stats(rows: PautaRow[], comp: string[], f: Pick<PautaFilters, "metrica" | "currency">, rate: number): Stats {
+  const v = (r: PautaRow) => valueOf(r, f, rate);
+  const money = (r: PautaRow) => (f.currency === "USD" ? r.consumo / rate : r.consumo);
+  const imp = (r: PautaRow) => r.impresiones ?? 0;
+  const inB = (b: Bucket, rs = rows) => rs.filter((r) => r.bucket === b);
+  const compRows = rows.filter((r) => comp.includes(r.cuenta));
+  const w1 = sum(inB("w1"), v);
+  const w2 = sum(inB("w2"), v);
+  const pre = sum(inB("pre"), v);
+  const nosplit = sum(inB("nosplit"), v);
+  const cc_w1 = sum(inB("w1", compRows), v);
+  const cc_w2 = sum(inB("w2", compRows), v);
+  const sets: Record<"w1" | "w2" | "pre" | "total" | "cc_w1" | "cc_w2", PautaRow[]> = {
+    w1: inB("w1"),
+    w2: inB("w2"),
+    pre: inB("pre"),
+    total: rows,
+    cc_w1: inB("w1", compRows),
+    cc_w2: inB("w2", compRows),
+  };
+  const cpm = {} as Stats["cpm"];
+  const impresiones = {} as Stats["impresiones"];
+  for (const [k, rs] of Object.entries(sets) as [keyof typeof sets, PautaRow[]][]) {
+    const i = sum(rs, imp);
+    impresiones[k] = i;
+    cpm[k] = i > 0 ? (sum(rs, money) / i) * 1000 : null;
   }
-
+  const byPeriod = (b: Periodo) => (b === "all" ? rows : inB(b)).filter((r) => r.consumo > 0);
+  const nota_var =
+    cc_w1 > 0 ? "" : nosplit > 0 ? "Sin desglose" : w1 > 0 ? "Sin reporte 12–16" : w2 > 0 ? "Nueva en semana 2" : "";
+  const total = w1 + w2 + pre + nosplit;
   return {
-    consumo,
-    impresiones,
-    cpm: impresiones ? (sum(rows.filter((r) => r.impresiones), (r) => r.consumo) / impresiones) * 1000 : 0,
-    pre: byBucket("pre"),
     w1,
     w2,
-    promW1,
-    promW2,
-    variacion: promW1 ? ((promW2 - promW1) / promW1) * 100 : null,
-    nuevasW2,
-    /** Proyección de la semana 2 completa (7 días) al ritmo actual. No es consumo real. */
-    proyeccionW2: (w2 / p.semanas.w2.dias) * 7,
-    resultTypes: [...resultTypes.entries()]
-      .map(([tipo, v]) => ({ tipo, ...v, costo: v.resultados ? v.consumo / v.resultados : 0 }))
-      .sort((a, b) => b.consumo - a.consumo),
-    semanalSinDia: sum(rows.filter((r) => !r.dia), (r) => r.consumo),
+    pre,
+    nosplit,
+    total,
+    cc_w1,
+    cc_w2,
+    prom_w1: w1 / DIAS_S1,
+    prom_w2: w2 / DIAS_S2,
+    promc_w1: cc_w1 / DIAS_S1,
+    promc_w2: cc_w2 / DIAS_S2,
+    dif_ritmo: cc_w1 > 0 ? cc_w2 / DIAS_S2 - cc_w1 / DIAS_S1 : null,
+    var_abs: cc_w1 > 0 ? cc_w2 - cc_w1 : null,
+    var_pct: cc_w1 > 0 ? (cc_w2 - cc_w1) / cc_w1 : null,
+    var_ritmo: cc_w1 > 0 ? cc_w2 / DIAS_S2 / (cc_w1 / DIAS_S1) - 1 : null,
+    var_ritmo_todas: w1 > 0 ? w2 / DIAS_S2 / (w1 / DIAS_S1) - 1 : null,
+    proy_s2: w2 > 0 ? (w2 / DIAS_S2) * 7 : null,
+    cpm,
+    impresiones,
+    n_cuentas: (b) => new Set(byPeriod(b).map((r) => r.cuenta)).size,
+    n_paises: (b) => new Set(byPeriod(b).map((r) => r.pais)).size,
+    paises: [...new Set(rows.filter((r) => r.consumo > 0).map((r) => r.pais))].sort(),
+    nota_var,
+    get: (p) => (p === "all" ? total : p === "w1" ? w1 : p === "w2" ? w2 : pre),
   };
 }
 
 export interface DailyPoint {
   dia: string;
-  total: number;
-  countries: Record<string, number>;
+  value: number;
+  bucket: Bucket;
 }
 
-/** Consumo por día y país. Las filas semanales sin día (P282) no entran. */
-export function pautaDaily(rows: PautaRow[]): DailyPoint[] {
-  const map = new Map<string, DailyPoint>();
-  for (let d = 1; d <= 16; d++) {
-    const dia = `2026-10-${String(d).padStart(2, "0")}`;
-    map.set(dia, { dia, total: 0, countries: {} });
-  }
-  for (const r of rows) {
-    if (!r.dia) continue;
-    const p = map.get(r.dia) ?? { dia: r.dia, total: 0, countries: {} };
-    const k = countryKey(r.pais);
-    p.total += r.consumo;
-    p.countries[k] = (p.countries[k] ?? 0) + r.consumo;
-    map.set(r.dia, p);
-  }
-  return [...map.values()].sort((a, b) => a.dia.localeCompare(b.dia));
+/** Valor por día (solo perfiles con reporte diario; P282 no tiene día). */
+export function daily(rows: PautaRow[], f: Pick<PautaFilters, "metrica" | "currency">, rate: number): DailyPoint[] {
+  const all = [...new Set(rows.filter((r) => r.dia).map((r) => r.dia as string))];
+  const dias = [...new Set([...all, ...Array.from({ length: 16 }, (_, i) => `2026-10-${String(i + 1).padStart(2, "0")}`)])].sort();
+  return dias.map((dia) => ({
+    dia,
+    value: sum(rows.filter((r) => r.dia === dia), (r) => valueOf(r, f, rate)),
+    bucket: dia < "2026-10-05" ? "pre" : dia <= "2026-10-11" ? "w1" : "w2",
+  }));
 }
 
-export interface GroupTotal {
-  key: string;
-  label: string;
-  tipo?: string;
-  paises: string[];
-  consumo: number;
-  pct: number;
-  impresiones: number;
+export interface ResultRow {
+  cuenta: string;
+  pais: string;
+  tipoResultado: string | null;
+  res_w1: number;
+  res_w2: number;
   resultados: number;
-  pre: number;
-  w1: number;
-  w2: number;
-  /** Variación del promedio diario semana 2 vs semana 1; null sin base. */
-  variacion: number | null;
+  costo: number | null;
 }
 
-function group(rows: PautaRow[], p: PautaPayload, keyOf: (r: PautaRow) => string, labelOf: (r: PautaRow) => string): GroupTotal[] {
-  const total = sum(rows, (r) => r.consumo) || 1;
-  const map = new Map<string, PautaRow[]>();
-  for (const r of rows) map.set(keyOf(r), [...(map.get(keyOf(r)) ?? []), r]);
-  return [...map.entries()]
-    .map(([key, rs]) => {
-      const consumo = sum(rs, (r) => r.consumo);
-      const w1 = sum(rs.filter((r) => r.bucket === "w1"), (r) => r.consumo);
-      const w2 = sum(rs.filter((r) => r.bucket === "w2"), (r) => r.consumo);
-      const a = w1 / p.semanas.w1.dias;
-      const b = w2 / p.semanas.w2.dias;
-      return {
-        key,
-        label: labelOf(rs[0]),
-        tipo: rs[0].tipo,
-        paises: [...new Set(rs.map((r) => countryKey(r.pais)))],
-        consumo,
-        pct: (consumo / total) * 100,
-        impresiones: sum(rs, (r) => r.impresiones),
-        resultados: sum(rs, (r) => r.resultados),
-        pre: sum(rs.filter((r) => r.bucket === "pre"), (r) => r.consumo),
-        w1,
-        w2,
-        variacion: w1 > 0 && w2 > 0 ? ((b - a) / a) * 100 : null,
-      };
-    })
-    .sort((x, y) => y.consumo - x.consumo);
+/** Resultados por cuenta y país (solo referencia: tipos distintos no se suman). */
+export function resultados(rows: PautaRow[], currency: Currency, rate: number): ResultRow[] {
+  const con = rows.filter((r) => r.resultados !== null && r.resultados !== undefined);
+  const keys = [...new Set(con.map((r) => `${r.cuenta}|${r.pais}`))].sort();
+  return keys.map((k) => {
+    const [cuenta, pais] = k.split("|");
+    const rs = con.filter((r) => r.cuenta === cuenta && r.pais === pais);
+    const s = (b: Bucket | null, fn: (r: PautaRow) => number) => sum(b ? rs.filter((r) => r.bucket === b) : rs, fn);
+    const res = s(null, (r) => r.resultados ?? 0);
+    const gasto = s(null, (r) => r.consumo);
+    return {
+      cuenta,
+      pais,
+      tipoResultado: rs[0].tipoResultado,
+      res_w1: s("w1", (r) => r.resultados ?? 0),
+      res_w2: s("w2", (r) => r.resultados ?? 0),
+      resultados: res,
+      costo: res ? (currency === "USD" ? gasto / rate : gasto) / res : null,
+    };
+  });
 }
 
-export const pautaByCountry = (rows: PautaRow[], p: PautaPayload) => group(rows, p, (r) => countryKey(r.pais), (r) => resolveCountry(r.pais).name);
-export const pautaByAccount = (rows: PautaRow[], p: PautaPayload) => group(rows, p, (r) => r.cuenta, (r) => r.cuenta);
-export const pautaByCampaign = (rows: PautaRow[], p: PautaPayload) => group(rows, p, (r) => r.campana, (r) => r.campana);
+/** Control de duplicados sobre las filas originales de los Excel. */
+export function control(originales: OriginalRow[]) {
+  const camp = originales.filter((r) => r.campana !== "(total)");
+  return {
+    archivos: new Set(originales.map((r) => r.archivo)).size,
+    hojas: new Set(originales.map((r) => `${r.archivo}|${r.hoja}`)).size,
+    filas: originales.length,
+    filas_total: originales.length - camp.length,
+    suma_bruta: camp.reduce((a, r) => a + Number(r.consumo), 0),
+    duplicado: camp.reduce((a, r) => a + (Number(r.duplicado) || 0), 0),
+  };
+}
+
+export const yJoin = (a: string[]) => (a.length > 1 ? `${a.slice(0, -1).join(", ")} y ${a[a.length - 1]}` : a.join(""));
