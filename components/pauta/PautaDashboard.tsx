@@ -234,8 +234,8 @@ export function PautaDashboard() {
                   extra={
                     <>
                       <p>Semana 1: {money(view.summary.promW1)} / día</p>
-                      {view.summary.excluidas.length > 0 && (
-                        <p className="text-xs">Base comparable · sin {view.summary.excluidas.join(", ")}</p>
+                      {view.summary.nuevasW2.length > 0 && (
+                        <p className="text-xs">Incluye {view.summary.nuevasW2.join(", ")} (empezó en la semana 2)</p>
                       )}
                     </>
                   }
@@ -443,7 +443,13 @@ export function PautaDashboard() {
                           <td className="tabular whitespace-nowrap px-4 py-3.5 text-right text-fg">{a.w1 ? money(a.w1) : "—"}</td>
                           <td className="tabular whitespace-nowrap px-4 py-3.5 text-right text-fg">{a.w2 ? money(a.w2) : "—"}</td>
                           <td className="whitespace-nowrap px-4 py-3.5 text-right">
-                            {a.variacion === null ? <span className="text-xs text-muted">sin base</span> : <DeltaBadge value={a.variacion} />}
+                            {a.variacion !== null ? (
+                              <DeltaBadge value={a.variacion} />
+                            ) : a.w2 > 0 ? (
+                              <span className="rounded-full bg-azar-50 px-2.5 py-1 text-xs font-semibold text-azar dark:bg-azar/15">Nueva en S2</span>
+                            ) : (
+                              <span className="text-xs text-muted">—</span>
+                            )}
                           </td>
                           <td className="tabular whitespace-nowrap px-4 py-3.5 text-right font-semibold text-fg">{money(a.consumo)}</td>
                           <td className="tabular whitespace-nowrap px-4 py-3.5 text-right text-fg">{formatInt(a.impresiones)}</td>

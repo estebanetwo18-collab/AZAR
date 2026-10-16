@@ -2087,7 +2087,7 @@
    "categoria": "Supuesto",
    "severidad": "media",
    "titulo": "P345 empezó a gastar el 12 de octubre",
-   "detalle": "La campaña figura con inicio 2026-10-09, pero el reporte diario solo trae días del 12 al 16. Se toma como sin consumo en la semana 1. P345 queda fuera de la variación porque no tiene base de comparación."
+   "detalle": "La campaña figura con inicio 2026-10-09, pero el reporte diario solo trae días del 12 al 16. Se toma como sin consumo en la semana 1. Su consumo de la semana 2 sí se incluye en el ritmo y la variación total; en la tabla por cuenta figura como nueva en la semana 2."
   },
   {
    "id": "A07",
@@ -2157,7 +2157,7 @@
    "categoria": "Supuesto",
    "severidad": "media",
    "titulo": "Promedios diarios y variaciones",
-   "detalle": "Semana 1 = 7 días (5–11). Semana 2 = 5 días (12–16). Las variaciones usan la base comparable: perfiles con consumo en ambas semanas. La proyección al 18 = promedio diario real de la semana 2 × 7 y no es consumo real."
+   "detalle": "Semana 1 = 7 días (5–11). Semana 2 = 5 días (12–16). La variación total compara el promedio diario de todas las cuentas (incluye P345, que empezó el 12). Por cuenta, solo se calcula si hubo consumo en ambas semanas. La proyección al 18 = promedio diario real de la semana 2 × 7 y no es consumo real."
   },
   {
    "id": "A17",

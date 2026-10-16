@@ -69,17 +69,17 @@ export function pautaSummary(rows: PautaRow[], p: PautaPayload) {
   const impresiones = sum(rows, (r) => r.impresiones);
   const byBucket = (b: PautaRow["bucket"], set = rows) => sum(set.filter((r) => r.bucket === b), (r) => r.consumo);
 
-  // Base comparable: cuentas con consumo en ambas semanas (igual que el reporte original).
+  // El ritmo usa todas las cuentas, incluidas las que empezaron en la semana 2 (P345).
   const cuentas = [...new Set(rows.map((r) => r.cuenta))];
-  const comparable = cuentas.filter((c) => {
-    const rs = rows.filter((r) => r.cuenta === c);
-    return byBucket("w1", rs) > 0 && byBucket("w2", rs) > 0;
-  });
-  const compRows = rows.filter((r) => comparable.includes(r.cuenta));
   const w1 = byBucket("w1");
   const w2 = byBucket("w2");
-  const promW1 = byBucket("w1", compRows) / p.semanas.w1.dias;
-  const promW2 = byBucket("w2", compRows) / p.semanas.w2.dias;
+  const promW1 = w1 / p.semanas.w1.dias;
+  const promW2 = w2 / p.semanas.w2.dias;
+  /** Cuentas sin consumo en la semana 1 que suman solo en la semana 2. */
+  const nuevasW2 = cuentas.filter((c) => {
+    const rs = rows.filter((r) => r.cuenta === c);
+    return byBucket("w1", rs) === 0 && byBucket("w2", rs) > 0;
+  });
 
   const resultTypes = new Map<string, { resultados: number; consumo: number }>();
   for (const r of rows) {
@@ -100,8 +100,7 @@ export function pautaSummary(rows: PautaRow[], p: PautaPayload) {
     promW1,
     promW2,
     variacion: promW1 ? ((promW2 - promW1) / promW1) * 100 : null,
-    comparable,
-    excluidas: cuentas.filter((c) => !comparable.includes(c)),
+    nuevasW2,
     /** Proyección de la semana 2 completa (7 días) al ritmo actual. No es consumo real. */
     proyeccionW2: (w2 / p.semanas.w2.dias) * 7,
     resultTypes: [...resultTypes.entries()]
