@@ -118,3 +118,13 @@ npm run build      # build de producción
 npm run start      # servir el build
 npm run typecheck  # verificación de tipos
 ```
+
+## Sección "Pauta Octubre" (`/pauta`)
+
+Reporte de pauta de **Meta Ads del 1 al 16 de octubre de 2026** (consumo, impresiones y resultados por campaña, cuenta y país), tomado del consolidado "Pauta Octubre Azar Latino".
+
+- Datos en `data/pauta-octubre.json` (119 filas consolidadas + notas de auditoría). Se sirven por `/api/pauta`, protegida por la contraseña, y no se incluyen en el JavaScript público.
+- Consumo en UYU (como lo reporta Meta). El switch a dólares usa el tipo de cambio del reporte (UYU ÷ 40.14, cierre 16 oct).
+- Semana 1 = 5–11 oct (7 días), semana 2 = 12–16 oct (5 días). La variación compara promedios diarios usando solo las cuentas con consumo en ambas semanas (P345 queda fuera).
+- P282 llega en reportes semanales sin desglose diario: suma en los totales pero no en el gráfico diario.
+- Para actualizarla con un nuevo reporte, reemplaza `data/pauta-octubre.json` con la misma estructura y vuelve a desplegar.
