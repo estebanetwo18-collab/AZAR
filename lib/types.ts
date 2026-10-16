@@ -17,7 +17,19 @@ export interface Movement {
   usd: number;
 }
 
-export type DataSourceKind = "google-sheet" | "drive-xlsx" | "mock";
+export type DataSourceKind = "google-sheet" | "drive-xlsx" | "snapshot";
+
+/** Corrección automática aplicada a una fila. */
+export interface Correction {
+  invoice: string;
+  date: string;
+  field: string;
+  from: string;
+  to: string;
+  /** false = detectado pero no corregido (requiere revisión). */
+  applied: boolean;
+  reason: string;
+}
 
 export interface DataPayload {
   rows: Movement[];
@@ -31,6 +43,10 @@ export interface DataPayload {
     duplicatesRemoved: number;
     /** Filas de otros países (fuera de Centroamérica) que se excluyeron. */
     excludedOtherCountries: number;
+    /** Filas incompletas ignoradas (sin fecha, país o importe). */
+    incompleteRows: number;
+    /** Fecha (yyyy-mm-dd) del último fondeo cargado. */
+    lastDataDate: string | null;
   };
 }
 
@@ -47,6 +63,8 @@ export type DatePreset =
   | "yesterday"
   | "last7"
   | "last30"
+  | "thisWeek"
+  | "lastWeek"
   | "thisMonth"
   | "lastMonth"
   | "custom";

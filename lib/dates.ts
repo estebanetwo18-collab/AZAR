@@ -73,6 +73,12 @@ export function presetRange(
       const y = addDays(today, -1);
       return { from: y, to: y };
     }
+    case "thisWeek":
+      return { from: startOfWeek(today), to: today };
+    case "lastWeek": {
+      const from = addDays(startOfWeek(today), -7);
+      return { from, to: addDays(from, 6) };
+    }
     case "last7":
       return { from: addDays(today, -6), to: today };
     case "last30":
@@ -105,6 +111,10 @@ export function previousRange(range: DateRange, preset: DatePreset): DateRange |
     const len = daysBetween(range.from, range.to);
     const to = addDays(prevStart, len);
     return { from: prevStart, to: to > prevMonthEnd ? prevMonthEnd : to };
+  }
+  if (preset === "thisWeek" || preset === "lastWeek") {
+    // Mismos días de la semana anterior (lunes a hoy vs lunes a mismo día).
+    return { from: addDays(range.from, -7), to: addDays(range.to, -7) };
   }
   if (preset === "lastMonth") {
     const prevEnd = addDays(range.from, -1);

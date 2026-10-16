@@ -377,8 +377,6 @@ const SEV: Record<string, string> = {
 export function Auditoria({ c }: { c: PautaCtx }) {
   const ct = control(c.data.originales);
   const [showOrig, setShowOrig] = useState(false);
-  const order = { alta: 0, media: 1, baja: 2, info: 3 } as Record<string, number>;
-  const alertas = c.data.auditoria.filter((n) => !["Info", "Confirmado", "Corrección"].includes(n.categoria)).sort((a, b) => order[a.severidad] - order[b.severidad]);
   const registro = c.data.auditoria.filter((n) => ["Info", "Confirmado", "Corrección"].includes(n.categoria));
   const u = (v: number) => formatMoney(v, "UYU");
   return (
@@ -401,24 +399,7 @@ export function Auditoria({ c }: { c: PautaCtx }) {
           </div>
         ))}
       </dl>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Panel title="Alertas, supuestos y ambigüedades">
-          <ul className="space-y-3">
-            {alertas.map((n) => (
-              <li key={n.id} className="rounded-2xl bg-card-muted p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase", SEV[n.severidad])}>{n.severidad}</span>
-                  <span className="text-xs text-muted">{n.categoria}</span>
-                </div>
-                <p className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-fg">
-                  {n.severidad === "alta" ? <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" /> : <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted" />}
-                  {n.titulo}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-muted [overflow-wrap:anywhere]">{n.detalle}</p>
-              </li>
-            ))}
-          </ul>
-        </Panel>
+      <div className="grid gap-4">
         <Panel title="Registro de procesamiento">
           <Table
             minWidth={420}

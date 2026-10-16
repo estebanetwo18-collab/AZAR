@@ -1,7 +1,7 @@
 import type { Currency, DatePreset, Filters, GroupBy } from "./types";
 
 export const DEFAULT_FILTERS: Filters = {
-  preset: "all",
+  preset: "thisWeek",
   countries: [],
   types: [],
   accounts: [],
@@ -9,13 +9,15 @@ export const DEFAULT_FILTERS: Filters = {
   groupBy: "day",
 };
 
-const PRESETS: DatePreset[] = ["all", "today", "yesterday", "last7", "last30", "thisMonth", "lastMonth", "custom"];
+const PRESETS: DatePreset[] = ["all", "today", "yesterday", "thisWeek", "lastWeek", "last7", "last30", "thisMonth", "lastMonth", "custom"];
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 
 export const PRESET_LABELS: Record<DatePreset, string> = {
   all: "Todo el historial",
   today: "Hoy",
   yesterday: "Ayer",
+  thisWeek: "Esta semana",
+  lastWeek: "Semana pasada",
   last7: "Últimos 7 días",
   last30: "Últimos 30 días",
   thisMonth: "Este mes",

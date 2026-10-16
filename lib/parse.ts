@@ -1,5 +1,5 @@
 import { isCentralAmerica, resolveCountry, stripAccents } from "./countries";
-import type { Movement } from "./types";
+import type { Correction, Movement } from "./types";
 
 /** Tabla cruda: nombre de la pestaña + matriz de celdas (fila 1 = encabezados). */
 export interface RawTable {
@@ -117,6 +117,10 @@ export interface ParseResult {
   duplicatesRemoved: number;
   /** Filas de países fuera de Centroamérica (no se muestran). */
   excludedOtherCountries: number;
+  /** Filas con datos sueltos pero sin fecha, país o importe (no se pueden usar). */
+  incompleteRows: number;
+  /** Correcciones automáticas aplicadas a los datos. */
+  corrections: Correction[];
 }
 
 /**
@@ -131,6 +135,7 @@ export function parseTables(tables: RawTable[]): ParseResult {
   const perKey = new Map<string, { count: number; rows: Movement[] }>();
   let totalCandidates = 0;
   let excluded = 0;
+  let incomplete = 0;
 
   for (const table of tables) {
     const cols = detectColumns(table.rows[0]);
@@ -146,7 +151,11 @@ export function parseTables(tables: RawTable[]): ParseResult {
       const countryRaw = text(row[cols.country]);
       const uyu = parseAmount(row[cols.uyu]);
       const usd = parseAmount(row[cols.usd]);
-      if (!date || !countryRaw || (uyu === null && usd === null)) continue;
+      if (!date || !countryRaw || (uyu === null && usd === null)) {
+        // Fila con algo escrito (p. ej. una cuenta o fecha suelta) pero inutilizable.
+        incomplete++;
+        continue;
+      }
 
       const { key, name } = resolveCountry(countryRaw);
       if (!isCentralAmerica(key)) {
@@ -185,10 +194,80 @@ export function parseTables(tables: RawTable[]): ParseResult {
 
   const rows = [...perKey.values()].flatMap((v) => v.rows);
   fillMissingCurrency(rows);
+  const corrections = correctAccounts(rows);
   rows.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.invoice.localeCompare(b.invoice)));
   rows.forEach((r, i) => (r.id = `${r.invoice || "row"}-${i}`));
 
-  return { rows, sheets, duplicatesRemoved: totalCandidates - rows.length, excludedOtherCountries: excluded };
+  return {
+    rows,
+    sheets,
+    duplicatesRemoved: totalCandidates - rows.length,
+    excludedOtherCountries: excluded,
+    incompleteRows: incomplete,
+    corrections,
+  };
+}
+
+const isLongNumber = (s: string) => /^\d{12,}$/.test(s);
+
+/**
+ * Corrige errores de carga frecuentes en las columnas Cuenta / ID de la cuenta:
+ * 1. El ID pegado en la columna Cuenta (y la columna ID vacía): se mueve el ID a su columna y se
+ *    pone la cuenta que usa ese ID en el resto de filas.
+ * 2. Una cuenta con un ID distinto al que usa en la mayoría de sus filas (ID copiado de la fila de
+ *    al lado): se reemplaza por el ID habitual de esa cuenta.
+ */
+export function correctAccounts(rows: Movement[]): Correction[] {
+  const out: Correction[] = [];
+  const idToAccounts = new Map<string, Map<string, number>>();
+  const accToIds = new Map<string, Map<string, number>>();
+  const bump = (m: Map<string, Map<string, number>>, k: string, v: string) => {
+    const inner = m.get(k) ?? new Map<string, number>();
+    inner.set(v, (inner.get(v) ?? 0) + 1);
+    m.set(k, inner);
+  };
+  for (const r of rows) {
+    if (!r.accountId || isLongNumber(r.account)) continue;
+    bump(idToAccounts, r.accountId, r.account);
+    bump(accToIds, r.account, r.accountId);
+  }
+  const top = (m?: Map<string, number>) => {
+    if (!m) return null;
+    const sorted = [...m.entries()].sort((a, b) => b[1] - a[1]);
+    // Solo si hay una mayoría clara.
+    return sorted.length && (sorted.length === 1 || sorted[0][1] > sorted[1][1]) ? sorted[0][0] : null;
+  };
+
+  for (const r of rows) {
+    if (isLongNumber(r.account)) {
+      const id = r.account;
+      const acc = top(idToAccounts.get(id));
+      if (acc) {
+        out.push({ invoice: r.invoice, date: r.date, field: "Cuenta", from: r.account, to: acc, applied: true, reason: `En la columna Cuenta estaba el ID ${id}; ese ID corresponde a ${acc}.` });
+        r.account = acc;
+        if (!r.accountId) r.accountId = id;
+      }
+    }
+  }
+  for (const r of rows) {
+    const usual = top(accToIds.get(r.account));
+    if (!usual || !r.accountId || r.accountId === usual) continue;
+    const owner = top(idToAccounts.get(r.accountId));
+    const times = accToIds.get(r.account)?.get(r.accountId) ?? 0;
+    // Solo se corrige un caso aislado (típico ID copiado de la fila de al lado). Si se repite, puede ser real.
+    const applied = times === 1;
+    out.push({
+      invoice: r.invoice,
+      date: r.date,
+      field: "ID de la cuenta",
+      from: r.accountId,
+      to: applied ? usual : r.accountId,
+      applied,
+      reason: `${r.account} usa el ID ${usual} en sus otras filas${owner && owner !== r.account ? `; ${r.accountId} es el ID de ${owner}` : ""}.${applied ? "" : ` Sin corregir: se repite ${times} veces, revisar.`}`,
+    });
+    if (applied) r.accountId = usual;
+  }
+  return out;
 }
 
 /** Si una fila solo trae una moneda, se completa con la tasa mediana del resto de filas. */

@@ -3,9 +3,8 @@ import { JWT } from "google-auth-library";
 import { drive as driveApi } from "@googleapis/drive";
 import { sheets as sheetsApi } from "@googleapis/sheets";
 import * as XLSX from "xlsx";
-import { mockTables } from "./mock";
+import base from "@/data/fondeos-base.json";
 import { parseTables, type RawTable } from "./parse";
-import { todayISO } from "./dates";
 import type { DataPayload, DataSourceKind } from "./types";
 
 const DEFAULT_SHEET_ID = "1zsXZiFDlRfBjsJ9TQy3boqJUpBntjI0j";
@@ -31,7 +30,7 @@ function credentials() {
   return { email, key };
 }
 
-export const usingMock = () => credentials() === null;
+export const hasCredentials = () => credentials() !== null;
 
 async function readFromGoogle(): Promise<{ tables: RawTable[]; source: DataSourceKind; fileName?: string }> {
   const creds = credentials()!;
@@ -126,30 +125,34 @@ function explain(err: unknown): DataSourceError {
 let cache: { at: number; payload: DataPayload } | null = null;
 let inflight: Promise<DataPayload> | null = null;
 
-async function load(): Promise<DataPayload> {
-  let tables: RawTable[];
-  let source: DataSourceKind;
-  let fileName: string | undefined;
+/** Base de fondeos ya cargada en el proyecto (sin CEDULA, solo Centroamérica). */
+const BASE_TABLES = (base as { tables: RawTable[] }).tables;
 
-  if (usingMock()) {
-    tables = mockTables(todayISO());
-    source = "mock";
-    fileName = "Datos de ejemplo";
-  } else {
+async function load(): Promise<DataPayload> {
+  let live: RawTable[] = [];
+  let source: DataSourceKind = "snapshot";
+  let fileName: string | undefined = "Fondeo MKT - CAM";
+
+  if (hasCredentials()) {
     try {
-      ({ tables, source, fileName } = await readFromGoogle());
+      ({ tables: live, source, fileName } = await readFromGoogle());
     } catch (err) {
       throw explain(err);
     }
   }
 
-  const parsed = parseTables(tables);
-  if (!parsed.sheets.length) {
+  // Lo leído en vivo va primero; la base completa el histórico. Las filas repetidas se descartan.
+  const parsed = parseTables([...live, ...BASE_TABLES]);
+  if (!parsed.rows.length) {
     throw new DataSourceError(
       "No se encontró la pestaña de datos crudos.",
       "Debe existir una pestaña con los encabezados en la fila 1: Fecha, País, Tipo, Cuenta, ID de la cuenta, CEDULA, FACTURA, Importe UYU, Importe USD.",
       422,
     );
+  }
+  if (parsed.corrections.length) {
+    // Solo para revisión interna (logs del servidor); no se muestra en el dashboard.
+    console.info("[datos] correcciones:", JSON.stringify(parsed.corrections));
   }
   return {
     rows: parsed.rows,
@@ -160,6 +163,8 @@ async function load(): Promise<DataPayload> {
       fetchedAt: new Date().toISOString(),
       duplicatesRemoved: parsed.duplicatesRemoved,
       excludedOtherCountries: parsed.excludedOtherCountries,
+      incompleteRows: parsed.incompleteRows,
+      lastDataDate: parsed.rows[0]?.date ?? null,
     },
   };
 }

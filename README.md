@@ -16,7 +16,18 @@ npm install
 npm run dev
 ```
 
-Abre http://localhost:3000. Si faltan `GOOGLE_SERVICE_ACCOUNT_EMAIL` / `GOOGLE_PRIVATE_KEY`, el dashboard usa automáticamente **datos de ejemplo** (verás la etiqueta "Datos de ejemplo" en el header). Si no defines `DASHBOARD_PASSWORD`, en local no pide contraseña; en producción sí es obligatoria.
+Abre http://localhost:3000. El dashboard trae una **base de fondeos real** (`data/fondeos-base.json`: histórico de julio a octubre más los fondeos de la semana del 12 al 16 de octubre, sin CEDULA y solo Centroamérica), así que muestra datos reales aunque todavía no estén configuradas las credenciales de Google. Cuando se configuran `GOOGLE_SERVICE_ACCOUNT_EMAIL` / `GOOGLE_PRIVATE_KEY`, lo leído en vivo desde Drive se combina con esa base (las filas repetidas se descartan). Si no defines `DASHBOARD_PASSWORD`, en local no pide contraseña; en producción sí es obligatoria.
+
+### Vista inicial
+
+Al entrar se muestra **la semana en curso** (lunes a hoy, hora de Costa Rica), con una franja de **Hoy · Ayer · Esta semana · Mes en curso**. Cada tarjeta se puede tocar para cambiar el rango de todo el dashboard; el resto de fechas (semana pasada, mes pasado, todo el historial, personalizado) sigue disponible en el selector de fechas.
+
+### Correcciones automáticas
+
+Al leer los fondeos se corrigen errores de carga evidentes, y quedan registrados solo en los logs del servidor (no se muestran en el dashboard):
+- ID de la cuenta pegado en la columna Cuenta → se mueve a su columna y se usa la cuenta dueña de ese ID.
+- Una cuenta con un ID distinto al habitual en un único caso (ID copiado de la fila de al lado) → se usa su ID habitual. Si el caso se repite varias veces no se corrige, porque puede ser real.
+- Se ignoran filas incompletas (sin fecha, país o importe) y filas de total.
 
 ## Cómo se leen los datos
 
@@ -86,7 +97,7 @@ vercel --prod
 
 ## Uso
 
-- **Filtros** (barra superior, se guardan en la URL para compartir vistas): rango de fechas con presets, países (multiselección con banderas), tipo, cuenta (con búsqueda), moneda Pesos/Dólares (por defecto pesos uruguayos) y agrupación Día/Semana/Mes. Los filtros activos aparecen como chips removibles; "Limpiar filtros" los quita todos.
+- **Filtros** (barra superior, se guardan en la URL para compartir vistas): rango de fechas con presets (por defecto **Esta semana**), países (multiselección con banderas), tipo, cuenta (con búsqueda), moneda Pesos/Dólares (por defecto pesos uruguayos) y agrupación Día/Semana/Mes. Los filtros activos aparecen como chips removibles; "Limpiar filtros" los quita todos.
 - Clic en una mini-tarjeta de país o en una cuenta del ranking para filtrar por ella.
 - Las variaciones % comparan con el período anterior equivalente (mismo largo, inmediatamente antes; "Este mes" se compara con el mes anterior hasta el mismo día).
 - **Exportar CSV** descarga los movimientos filtrados (con importes en UYU y USD).
@@ -106,7 +117,10 @@ lib/
   parse.ts               Detección de pestañas y normalización
   aggregations.ts        Totales, series, rankings, filtros
   countries.ts           Mapa de países, etiquetas, banderas y colores
-  dates.ts, format.ts, filters.ts, mock.ts, auth.ts
+  dates.ts, format.ts, filters.ts, auth.ts
+data/
+  fondeos-base.json      Base de fondeos real (sin CEDULA)
+  pauta-octubre.json     Reporte de pauta de octubre
 components/              Una pieza por tarjeta (KpiCards, InvestmentFlow, …)
 ```
 

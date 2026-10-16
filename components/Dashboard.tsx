@@ -11,7 +11,7 @@ import {
   timeSeries,
   topAccounts,
 } from "@/lib/aggregations";
-import { todayISO } from "@/lib/dates";
+import { formatDate, todayISO } from "@/lib/dates";
 import { DEFAULT_FILTERS, filtersFromParams, filtersToParams } from "@/lib/filters";
 import type { Filters } from "@/lib/types";
 import { useDashboardData, useTheme } from "@/lib/use-dashboard-data";
@@ -22,6 +22,7 @@ import { FilterBar } from "./FilterBar";
 import { Header } from "./Header";
 import { InvestmentFlow } from "./InvestmentFlow";
 import { KpiCards } from "./KpiCards";
+import { QuickPulse } from "./QuickPulse";
 import { RecentMovements } from "./RecentMovements";
 import { DashboardSkeleton, EmptyState, ErrorState } from "./states";
 import { TopAccounts } from "./TopAccounts";
@@ -59,6 +60,7 @@ export function Dashboard() {
     const countries = byCountry(filtered.current, currency);
     return {
       filtered,
+      today,
       options: filterOptions(rows),
       total: sumOf(filtered.current, currency),
       countries,
@@ -91,6 +93,8 @@ export function Dashboard() {
               <strong>No se pudo actualizar:</strong> {error.error} {error.hint} Se muestran los últimos datos cargados.
             </div>
           )}
+
+          <QuickPulse rows={data!.rows} filters={filters} today={view.today} onPick={(preset) => setFilters({ preset, from: undefined, to: undefined })} />
 
           <KpiCards data={view.filtered} currency={filters.currency} />
 
@@ -132,9 +136,8 @@ export function Dashboard() {
           <RecentMovements rows={view.filtered.current} currency={filters.currency} />
 
           <footer className="pb-4 pt-2 text-center text-xs text-muted">
-            {data?.meta.fileName && <span>{data.meta.fileName} · </span>}
-            Pestañas leídas: {data?.meta.sheets.join(", ")}
-            {!!data?.meta.duplicatesRemoved && <span> · {data.meta.duplicatesRemoved} filas duplicadas entre pestañas omitidas</span>}
+            {data?.meta.fileName}
+            {data?.meta.lastDataDate && <span> · Datos actualizados al {formatDate(data.meta.lastDataDate)}</span>}
             <span className="mt-1 block">
               Solo se muestran países de Centroamérica. CAM = campañas regionales repartidas entre varios países.
             </span>

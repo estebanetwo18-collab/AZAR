@@ -3,7 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Calendar, Check, ChevronDown, Globe2, Layers, Search, Wallet, X } from "lucide-react";
-import { PRESET_LABELS } from "@/lib/filters";
+import { DEFAULT_FILTERS, PRESET_LABELS } from "@/lib/filters";
 import { formatDate, type DateRange } from "@/lib/dates";
 import type { FilterOptions } from "@/lib/aggregations";
 import type { DatePreset, Filters } from "@/lib/types";
@@ -127,7 +127,7 @@ function MultiSelect({
   );
 }
 
-const PRESET_ORDER: DatePreset[] = ["all", "today", "yesterday", "last7", "last30", "thisMonth", "lastMonth", "custom"];
+const PRESET_ORDER: DatePreset[] = ["today", "yesterday", "thisWeek", "lastWeek", "thisMonth", "lastMonth", "last7", "last30", "all", "custom"];
 
 function DateFilter({ filters, range, onChange }: { filters: Filters; range: DateRange | null; onChange: Props["onChange"] }) {
   const label =
@@ -188,7 +188,7 @@ export function FilterBar({ filters, options, range, onChange, onClear }: Props)
   const countryName = (k: string) => options.countries.find((c) => c.key === k)?.name ?? k;
 
   const chips: { key: string; label: ReactNode; remove: () => void }[] = [
-    ...(filters.preset !== "all"
+    ...(filters.preset !== DEFAULT_FILTERS.preset
       ? [
           {
             key: "date",
@@ -196,7 +196,7 @@ export function FilterBar({ filters, options, range, onChange, onClear }: Props)
               filters.preset === "custom" && range
                 ? `${formatDate(range.from)} – ${formatDate(range.to)}`
                 : PRESET_LABELS[filters.preset],
-            remove: () => onChange({ preset: "all", from: undefined, to: undefined }),
+            remove: () => onChange({ preset: DEFAULT_FILTERS.preset, from: undefined, to: undefined }),
           },
         ]
       : []),

@@ -6,6 +6,15 @@ import { usePathname } from "next/navigation";
 import { LogOut, Moon, RefreshCw, Sun } from "lucide-react";
 import type { DataPayload } from "@/lib/types";
 import { useRelativeTime } from "@/lib/use-dashboard-data";
+import { formatDate, TIME_ZONE } from "@/lib/dates";
+
+/** "jueves 16 oct 2026" en hora de Costa Rica. */
+function formatToday() {
+  return new Intl.DateTimeFormat("es", { timeZone: TIME_ZONE, weekday: "long", day: "numeric", month: "short", year: "numeric" })
+    .format(new Date())
+    .replace(/,/g, "")
+    .replace(".", "");
+}
 import { cn } from "./ui";
 
 interface Props {
@@ -43,7 +52,14 @@ export function Header({ meta, refreshing = false, onRefresh, subtitle = "Meta A
               </p>
               <p className="truncate text-xs text-white/45">
                 {subtitle}
-                {meta?.source === "mock" && <span className="ml-2 rounded-full bg-azar/20 px-2 py-0.5 text-[10px] font-medium text-azar-200">Datos de ejemplo</span>}
+                <span className="ml-2 rounded-full bg-azar/20 px-2 py-0.5 text-[10px] font-medium text-azar-200">
+                  Hoy · {formatToday()}
+                </span>
+                {meta?.lastDataDate && (
+                  <span className="ml-1.5 hidden rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/75 sm:inline">
+                    Datos actualizados al {formatDate(meta.lastDataDate)}
+                  </span>
+                )}
               </p>
             </div>
           </div>
