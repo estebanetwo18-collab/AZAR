@@ -141,3 +141,40 @@ Réplica completa del dashboard **"Pauta Octubre Azar Latino"** (Meta Ads, 1–1
 - Filtros: periodo, país, cuenta, tipo (CAM / individual), moneda (pesos por defecto, dólares con UYU ÷ 40.14) y métrica (consumo / impresiones).
 - Mismo criterio que el original: semana 1 = 5–11 oct (7 días), semana 2 = 12–16 oct (5 días); las variaciones usan la base comparable (cuentas con consumo en ambas semanas). P345 empezó el 12 de octubre: suma en los totales y en el promedio diario de la semana 2, y además se muestra el ritmo "con P345".
 - Para actualizarla con reportes nuevos, reemplaza `data/pauta-octubre.json` con la misma estructura y vuelve a desplegar.
+
+## Pestaña "Análisis semanal" (`/analisis-semanal`)
+
+Análisis semanal de Meta Ads (P282, P287 y P321 · CR, GT y HN · objetivo «Registros completados en el sitio web»), reconstruido desde la referencia aprobada `referencias/analisis-semanal-2026-10-12.html`. Tiene 7 secciones con sub-navegación: Resumen, Por país, Por cuenta, Anuncios (Top 3 / Bottom 3 y tabla completa), Creativo, Insights y Verificación.
+
+### Cómo se cargan las semanas
+
+- Cada semana es un archivo `data/analisis-semanal/AAAA-MM-DD.json`, con el nombre del **lunes** de la semana. El selector de semana lista todos los archivos y abre por defecto el más reciente.
+- Estructura: `meta`, `anuncios` y `semanaAnterior` (el objeto `DATA` de la referencia, **sin cambios**) más `contenido`, que guarda los textos de la semana: puntos del resumen, datos, insights, hipótesis y recomendaciones. Los textos son contenido, no código.
+- Dentro de `contenido`, los números van marcados para convertirse con el selector UYU/USD: `{{m:n}}` monto en UYU, `{{i:n}}` entero, `{{p:n}}` proporción (0,25 = 25 %), `{{f:n}}` frecuencia, `{{x:n}}` veces, `**texto**` negrita.
+- **Comparación semanal:** si existe el archivo de la semana anterior (lunes − 7 días), se activan las variaciones % en los KPIs, por país y por cuenta. Si no existe, se muestra el aviso «sin semana anterior».
+- Cada archivo se valida al leerlo (`lib/analisis-semanal/schema.ts`). Si uno está roto o incompleto, la pestaña muestra la última semana válida con un aviso que nombra el archivo y el campo con problemas; esa semana aparece desactivada en el selector.
+- Los datos se sirven por `/api/analisis-semanal`, protegida por el mismo login, y no quedan en el JavaScript público.
+
+### Agregar una semana nueva
+
+1. Guarda la referencia aprobada en `referencias/analisis-semanal-AAAA-MM-DD.html`.
+2. Genera el JSON (copia `DATA` tal cual y extrae los textos de la semana):
+   ```bash
+   npm run analisis:extraer -- referencias/analisis-semanal-AAAA-MM-DD.html data/analisis-semanal/AAAA-MM-DD.json
+   ```
+3. Revisa la pestaña en local (`npm run dev` → `/analisis-semanal`) y la sección **Verificación**: todos los controles deben decir «✓ Coincide».
+4. Commit y despliegue.
+
+### Moneda
+
+Montos originales en UYU. El selector **Pesos $U / Dólares US$** convierte toda la página (KPIs, tablas, ranking, gráficos e insights) con la tasa editable del encabezado. Por defecto se usa `meta.tipoCambio.uyuPorUsd`, marcada como **CONFIRMAR**. La tasa elegida se recuerda por semana en el navegador, y el botón ↺ vuelve a la tasa de referencia. La sección Verificación siempre compara en UYU contra el Excel.
+
+### Cálculos (`lib/analisis-semanal/calc.ts`)
+
+Misma lógica que la referencia, con todas las métricas calculadas desde totales:
+- costo por registro = gasto ÷ registros;
+- CPM = gasto ÷ impresiones × 1.000;
+- CTR (todos) ponderado por impresiones;
+- Hook y Hold ponderados solo sobre piezas de video; «N/A (estático)» cuando el Hook es 0 y el Hold está vacío.
+
+Cada anuncio se identifica por cuenta + campaña + conjunto + anuncio. Ranking: KPI costo por registro, desempate CTR, umbral gasto ≥ 1.000 UYU e impresiones ≥ 1.000.

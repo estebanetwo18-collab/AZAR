@@ -35,6 +35,7 @@ const iconBtn =
 const TABS = [
   { href: "/", label: "Recargas" },
   { href: "/pauta", label: "Pauta Octubre" },
+  { href: "/analisis-semanal", label: "Análisis semanal" },
 ];
 
 export function Header({ meta, refreshing = false, onRefresh, subtitle = "Meta Ads · Centroamérica", dark, onToggleTheme, children }: Props) {
@@ -90,7 +91,7 @@ export function Header({ meta, refreshing = false, onRefresh, subtitle = "Meta A
           </div>
         </div>
         {meta && <p className="-mt-2 text-xs text-white/50 md:hidden">Última actualización {updated}</p>}
-        <nav className="flex gap-1 border-b border-white/10" aria-label="Secciones">
+        <nav className="scrollbar-thin flex gap-1 overflow-x-auto border-b border-white/10" aria-label="Secciones">
           {TABS.map((t) => {
             const active = t.href === "/" ? pathname === "/" : pathname.startsWith(t.href);
             return (
@@ -98,7 +99,7 @@ export function Header({ meta, refreshing = false, onRefresh, subtitle = "Meta A
                 key={t.href}
                 href={t.href}
                 className={cn(
-                  "-mb-px border-b-2 px-3 pb-2.5 text-sm font-medium transition",
+                  "-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 pb-2.5 text-sm font-medium transition",
                   active ? "border-azar text-white" : "border-transparent text-white/50 hover:text-white",
                 )}
               >

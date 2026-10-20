@@ -1,0 +1,1926 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Azar Latino Análisis Semanal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: pestaña "Análisis semanal" del dashboard Azar Latino · Control de inversión. Tema oscuro único (#0A0A0A).
+   KPIs arriba → perspectivas (país, cuenta, anuncios, creativo) → insights → verificación. */
+:root{
+ color-scheme:dark;
+ --bg:#0A0A0A; --card:#141414; --card-2:#1B1B1B; --line:#262626; --line-2:#333333;
+ --ink:#EDEDED; --ink-2:#A3A3A3; --ink-3:#737373;
+ --accent:#D8C9A3; --accent-dim:#2A2519;
+ --cr:#3987E5; --gt:#D95926; --hn:#199E70;
+ --acc-a:#BDBDBD; --acc-b:#8E8E8E; --acc-c:#6A6A6A;
+ --good:#7FD39A; --good-bg:#12261A; --bad:#FF8A80; --bad-bg:#2B1513; --warn:#F2B24D; --warn-bg:#2A2010;
+ --dato:#8AB4F8; --insight:#D8C9A3; --hip:#F2B24D; --rec:#7FD39A;
+ --sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:0 64px}
+a{color:var(--accent)}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-2)}.faint{color:var(--ink-3)}
+
+/* barra superior estilo dashboard */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:1240px;margin:0 auto;padding:12px 16px 0;display:flex;flex-direction:column;gap:10px}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;justify-content:space-between}
+.brand h1{margin:0;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.brand h1 span{color:var(--ink-2);font-weight:400}
+.wk{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;gap:10px;flex-wrap:wrap}
+.wk b{color:var(--accent);font-weight:500}
+.curtg{display:inline-flex;border:1px solid var(--line-2);border-radius:6px;overflow:hidden}
+.cur{background:transparent;border:0;padding:3px 10px;font:500 12px var(--mono);color:var(--ink-2);cursor:pointer}
+.cur[aria-pressed="true"]{background:var(--accent);color:#0A0A0A}
+.rate{display:inline-flex;align-items:center;gap:6px;color:var(--ink-3)}
+.rate input{width:70px;background:var(--card);border:1px solid var(--line-2);border-radius:5px;color:var(--ink);font:12px var(--mono);padding:3px 6px}
+.wk{align-items:center}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs a{flex:0 0 auto;text-decoration:none;color:var(--ink-2);padding:8px 12px 10px;border-bottom:2px solid transparent;font-size:13px;white-space:nowrap}
+.tabs a.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs a:hover{color:var(--ink)}
+
+section.blk{padding-top:36px;scroll-margin-top:110px}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin-bottom:14px}
+.sh h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+.sh h2 small{font-family:var(--mono);font-size:12px;color:var(--ink-3);font-weight:400;margin-right:8px}
+.sh p{margin:0;color:var(--ink-2);max-width:70ch}
+h3{font-size:14px;font-weight:600;margin:0 0 10px;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.kpi{background:var(--card);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .l{font-size:12px;color:var(--ink-2)}
+.kpi .v{font-family:var(--mono);font-size:22px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .d{font-size:11.5px;color:var(--ink-3)}
+.kpi.main .v{color:var(--accent)}
+
+/* leyendas fijas */
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-2);align-items:center}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.sw.CR{background:var(--cr)}.sw.GT{background:var(--gt)}.sw.HN{background:var(--hn)}
+.acc{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;white-space:nowrap}
+.acc i{display:inline-block;width:11px;height:11px;border-radius:2px}
+.acc.P282 i{background:var(--acc-a)}
+.acc.P287 i{background:repeating-linear-gradient(135deg,var(--acc-b) 0 2px,transparent 2px 4px);border:1px solid var(--acc-b)}
+.acc.P321 i{background:transparent;border:2px solid var(--acc-c);border-radius:50%}
+.pais{display:inline-flex;align-items:center;gap:6px;font-weight:600;white-space:nowrap}
+.pais::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.pais.CR{color:var(--cr)}.pais.GT{color:var(--gt)}.pais.HN{color:var(--hn)}
+.pais span{color:var(--ink)}
+
+/* barras de distribución */
+.dist{display:flex;flex-direction:column;gap:14px}
+.drow{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center}
+.drow .lab{font-size:12px;color:var(--ink-2)}
+.dbar{display:flex;height:26px;gap:2px;border-radius:4px;overflow:hidden}
+.dbar div{height:100%;display:flex;align-items:center;padding:0 8px;font-family:var(--mono);font-size:11.5px;color:#0A0A0A;white-space:nowrap;overflow:hidden;min-width:0;cursor:default}
+.dbar .CR{background:var(--cr)}.dbar .GT{background:var(--gt)}.dbar .HN{background:var(--hn)}
+.dbar .P282{background:var(--acc-a)}
+.dbar .P287{background:repeating-linear-gradient(135deg,var(--acc-b) 0 3px,#7a7a7a 3px 6px)}
+.dbar .P321{background:var(--acc-c);color:#EDEDED}
+.dvals{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:11.5px;color:var(--ink-3);margin-top:-4px}
+.dvals b{font-family:var(--mono);font-weight:500;color:var(--ink-2)}
+.drow{row-gap:6px}
+
+/* embudo */
+.fun{display:flex;flex-direction:column;gap:6px}
+.fst{display:grid;grid-template-columns:130px 1fr 92px;gap:10px;align-items:center}
+.fst .bar{height:28px;background:var(--card-2);border-radius:4px;position:relative;overflow:hidden}
+.fst .bar i{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:4px;min-width:3px}
+.fst .n{font-family:var(--mono);text-align:right}
+.fconv{font-size:12px;color:var(--ink-3);padding-left:140px}
+
+/* puntos de la semana */
+.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.pts li{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.pts li b.n{font-family:var(--mono);color:var(--accent);font-weight:500}
+
+/* tablas */
+.tbx{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:9px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+th{font-size:11px;font-weight:500;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;background:var(--card-2);position:sticky;top:0}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#181818}
+tfoot td{background:var(--card-2);font-weight:600;border-top:1px solid var(--line-2);border-bottom:0}
+td.num{font-family:var(--mono)}
+th.sort{cursor:pointer;user-select:none}
+th.sort:hover{color:var(--ink)}
+th.sort[aria-sort="ascending"]::after{content:" ▲"}
+th.sort[aria-sort="descending"]::after{content:" ▼"}
+.wrapcell{white-space:normal;min-width:220px;max-width:340px}
+.cpr-cell{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.mbar{width:56px;height:6px;background:var(--card-2);border-radius:3px;overflow:hidden;flex:0 0 auto}
+.mbar i{display:block;height:100%;background:var(--ink-3);border-radius:3px}
+
+/* etiquetas */
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;white-space:nowrap;line-height:1.5}
+.t-good{background:var(--good-bg);color:var(--good)}
+.t-bad{background:var(--bad-bg);color:var(--bad)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-mut{background:var(--card-2);color:var(--ink-2)}
+.na{color:var(--ink-3);font-style:italic;font-family:var(--sans);font-size:12px}
+
+/* matriz país × cuenta */
+.mx td{vertical-align:top}
+.mxc{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.mxc .big{font-family:var(--mono);font-size:14px}
+.mxc .sm{font-size:11.5px;color:var(--ink-3)}
+.mxc.empty{color:var(--ink-3);font-style:italic;font-size:12px}
+
+/* filtros */
+.filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:12px}
+.fgroup{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.fgroup .fl{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
+.chip{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#0A0A0A;border-color:var(--ink)}
+.rule{font-size:12.5px;color:var(--ink-2);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.rule b{color:var(--ink);font-weight:600}
+
+/* ranking */
+.rank{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:12px}
+.rcol{border-radius:10px;border:1px solid var(--line);background:var(--card);overflow:hidden}
+.rcol header{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.rcol header h3{margin:0}
+.rcol.top header{border-top:3px solid var(--good)}
+.rcol.bot header{border-top:3px solid var(--bad)}
+.ad{padding:14px 16px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:28px 1fr;gap:4px 12px}
+.ad:last-child{border-bottom:0}
+.ad .pos{font-family:var(--mono);font-size:20px;color:var(--ink-3);line-height:1.1}
+.ad .nm{font-weight:600;word-break:break-word}
+.ad .ctx{font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.ad dl{grid-column:2;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px 12px;margin:8px 0 0}
+.ad dt{font-size:11px;color:var(--ink-3)}
+.ad dd{margin:0;font-family:var(--mono);font-size:13px}
+.ad .why{grid-column:2;font-size:12.5px;color:var(--ink-2);margin-top:6px;padding-left:10px;border-left:2px solid var(--line-2)}
+.top .ad .why{border-left-color:var(--good)}
+.bot .ad .why{border-left-color:var(--bad)}
+.empty{padding:16px;color:var(--ink-3);font-style:italic}
+
+/* barras horizontales (creativo) */
+.hb{display:flex;flex-direction:column;gap:8px}
+.hbr{display:grid;grid-template-columns:150px 1fr 96px;gap:10px;align-items:center;font-size:13px}
+.hbr .track{height:18px;background:var(--card-2);border-radius:3px;position:relative}
+.hbr .track i{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;background:var(--accent)}
+.hbr .track .ref{position:absolute;top:-4px;bottom:-4px;width:0;border-left:1px dashed var(--ink-3)}
+.hbr .v{font-family:var(--mono);text-align:right}
+
+/* insights */
+.ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:12px}
+.ib{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:16px}
+.ib header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ib header .k{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.ib.dato .k{background:#14223A;color:var(--dato)}
+.ib.insight .k{background:var(--accent-dim);color:var(--insight)}
+.ib.hip .k{background:var(--warn-bg);color:var(--hip)}
+.ib.rec .k{background:var(--good-bg);color:var(--rec)}
+.ib ol,.ib ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.ib li{padding-left:2px}
+.ib.rec li .what{font-weight:600}
+.ib.rec li .meta{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
+.ib.hip li em{font-style:normal;color:var(--ink-3)}
+
+/* notas y verificación */
+.note{font-size:12.5px;color:var(--ink-2);border-left:2px solid var(--line-2);padding:2px 0 2px 10px;margin:10px 0 0}
+.lims{margin:0;padding-left:18px;color:var(--ink-2);display:flex;flex-direction:column;gap:4px;font-size:13px}
+.ok{color:var(--good)}.ko{color:var(--bad)}
+.placeholder{border:1px dashed var(--line-2);border-radius:10px;padding:14px 16px;color:var(--ink-2);font-size:13px;display:flex;gap:12px;align-items:flex-start}
+.placeholder b{color:var(--ink)}
+
+/* tooltip */
+#tip{position:fixed;z-index:50;pointer-events:none;background:#1F1F1F;border:1px solid var(--line-2);border-radius:6px;padding:8px 10px;font-size:12px;max-width:260px;box-shadow:0 6px 20px rgba(0,0,0,.5);opacity:0;transition:opacity .08s}
+#tip.on{opacity:1}
+#tip b{display:block;margin-bottom:2px}
+
+@media (max-width:640px){
+ .drow{grid-template-columns:1fr}
+ .fst{grid-template-columns:96px 1fr 76px}
+ .fconv{padding-left:0}
+ .hbr{grid-template-columns:110px 1fr 80px}
+ .kpi .v{font-size:19px}
+ .kpis{grid-template-columns:1fr 1fr}
+ .kpis .kpi:last-child:nth-child(odd){grid-column:1/-1}
+ .sh h2{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="topbar">
+ <div class="in">
+  <div class="brand">
+   <h1>Azar Latino <span>· Control de inversión</span></h1>
+   <div class="wk"><span>Semana <b id="wkLabel"></b></span><span class="curtg" role="group" aria-label="Moneda"><button type="button" class="cur" data-c="UYU" aria-pressed="true">UYU</button><button type="button" class="cur" data-c="USD" aria-pressed="false">USD</button></span><label class="rate" for="rate">1 USD = <input id="rate" type="number" step="0.01" min="1" inputmode="decimal"> UYU</label></div>
+  </div>
+  <nav class="tabs" aria-label="Secciones">
+   <a href="#resumen" class="on">Resumen</a>
+   <a href="#pais">Por país</a>
+   <a href="#cuenta">Por cuenta</a>
+   <a href="#anuncios">Anuncios</a>
+   <a href="#creativo">Creativo</a>
+   <a href="#insights">Insights</a>
+   <a href="#verificacion">Verificación</a>
+  </nav>
+ </div>
+</header>
+
+<div class="wrap">
+
+<section class="blk" id="resumen" aria-labelledby="h-res">
+ <div class="sh"><h2 id="h-res"><small>01</small>Resumen de la semana</h2><p id="resLead"></p></div>
+ <div class="kpis" id="kpis"></div>
+ <div class="placeholder" style="margin-top:12px" id="cmpBox"></div>
+ <div class="grid g2" style="margin-top:12px">
+  <div class="card">
+   <h3>Gasto contra registros</h3>
+   <div class="legend" style="margin-bottom:12px"><span><i class="sw CR"></i>CR</span><span><i class="sw GT"></i>GT</span><span><i class="sw HN"></i>HN</span><span class="acc P282"><i></i>P282</span><span class="acc P287"><i></i>P287</span><span class="acc P321"><i></i>P321</span></div>
+   <div class="dist" id="dist"></div>
+   <p class="note">Cada barra suma 100 %. Si un segmento es más ancho en «Gasto» que en «Registros», ese país o cuenta consume más presupuesto del que convierte.</p>
+  </div>
+  <div class="card">
+   <h3>Embudo</h3>
+   <div class="fun" id="funnel"></div>
+   <p class="note" id="funNote"></p>
+  </div>
+ </div>
+ <div class="card" style="margin-top:12px">
+  <h3>Comportamiento de la semana</h3>
+  <ol class="pts" id="weekPts"></ol>
+ </div>
+</section>
+
+<section class="blk" id="pais" aria-labelledby="h-pais">
+ <div class="sh"><h2 id="h-pais"><small>02</small>Perspectiva por país</h2><p>Honduras solo tiene datos en P321.</p></div>
+ <div class="tbx"><table id="tPais"></table></div>
+ <h3 style="margin-top:20px">País × cuenta</h3>
+ <div class="tbx"><table class="mx" id="tMx"></table></div>
+ <p class="note">Cada celda muestra gasto, registros y costo por registro. La barra compara el costo por registro contra el más alto de la tabla (más corta = más eficiente).</p>
+</section>
+
+<section class="blk" id="cuenta" aria-labelledby="h-cta">
+ <div class="sh"><h2 id="h-cta"><small>03</small>Perspectiva por cuenta</h2><p>Misma estructura que por país.</p></div>
+ <div class="tbx"><table id="tCta"></table></div>
+ <div class="grid g2" style="margin-top:12px">
+  <div class="card"><h3>Combinaciones cuenta-país</h3><div class="tbx" style="border:0"><table id="tCombo"></table></div><p class="note" id="comboNote"></p></div>
+  <div class="card"><h3>Métricas que no trae cada cuenta</h3><div id="missing"></div></div>
+ </div>
+</section>
+
+<section class="blk" id="anuncios" aria-labelledby="h-ads">
+ <div class="sh"><h2 id="h-ads"><small>04</small>Top 3 y Bottom 3 anuncios</h2><p>Los filtros recalculan el ranking y la tabla.</p></div>
+ <div class="filters">
+  <div class="fgroup" id="fPais"><span class="fl">País</span></div>
+  <div class="fgroup" id="fCta"><span class="fl">Cuenta</span></div>
+ </div>
+ <div class="rule" id="ruleBox"></div>
+ <div class="rank" style="margin-top:12px">
+  <div class="rcol top"><header><span class="tag t-good">▲ Top 3</span><h3>Menor costo por registro</h3></header><div id="top3"></div></div>
+  <div class="rcol bot"><header><span class="tag t-bad">▼ Bottom 3</span><h3>Mayor costo por registro</h3></header><div id="bot3"></div></div>
+ </div>
+ <h3 style="margin-top:22px">Todos los anuncios <span class="faint" id="adCount" style="font-weight:400"></span></h3>
+ <div class="tbx" style="max-height:620px"><table id="tAds"></table></div>
+ <p class="note">Cada anuncio se identifica por cuenta + campaña + conjunto + anuncio. Nombres repetidos entre cuentas (por ejemplo «AD 6 KEYLA Tips para empezar» o «API (CAM) GT - NFL 3») aparecen como filas separadas.</p>
+</section>
+
+<section class="blk" id="creativo" aria-labelledby="h-cre">
+ <div class="sh"><h2 id="h-cre"><small>05</small>Análisis creativo</h2><p>Agrupación supuesta a partir del nombre del anuncio, el conjunto y el Hook/Hold Rate.</p></div>
+ <div class="grid g2">
+  <div class="card"><h3>Costo por registro por grupo</h3><div class="hb" id="hbCpr"></div><p class="note" id="hbNote"></p></div>
+  <div class="card"><h3>Resumen por grupo</h3><div class="tbx" style="border:0"><table id="tGrp"></table></div><p class="note">* Hook y Hold ponderados por impresiones, solo sobre piezas de video o animadas del grupo.</p></div>
+ </div>
+ <h3 style="margin-top:20px">Cómo se clasificó cada anuncio</h3>
+ <div class="tbx" style="max-height:480px"><table id="tCls"></table></div>
+</section>
+
+<section class="blk" id="insights" aria-labelledby="h-ins">
+ <div class="sh"><h2 id="h-ins"><small>06</small>Insights y recomendaciones</h2><p>Recomendaciones para la semana del 19 al 25 de octubre de 2026.</p></div>
+ <div class="ins" id="insBlocks"></div>
+</section>
+
+<section class="blk" id="verificacion" aria-labelledby="h-ver">
+ <div class="sh"><h2 id="h-ver"><small>07</small>Verificación de datos y limitaciones</h2></div>
+ <div class="grid g2">
+  <div class="card"><h3>Totales recalculados contra el Excel <span class="faint" style="font-weight:400">· en UYU, moneda del reporte</span></h3><div class="tbx" style="border:0"><table id="tVer"></table></div></div>
+  <div class="card"><h3>Comprobaciones manuales</h3><div class="tbx" style="border:0"><table id="tChk"></table></div></div>
+ </div>
+ <div class="grid g2" style="margin-top:12px">
+  <div class="card"><h3>Limitaciones</h3><ul class="lims" id="lims"></ul></div>
+  <div class="card"><h3>Supuestos y fuentes</h3><ul class="lims" id="sups"></ul></div>
+ </div>
+</section>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+/* =========================================================
+   DATOS — único objeto fuente. Filas normalizadas por anuncio.
+   ========================================================= */
+const DATA = {
+ "meta": {
+  "semana": {
+   "desde": "Lunes 12 de octubre de 2026",
+   "hasta": "domingo 18 de octubre de 2026",
+   "inicio": "2026-10-12",
+   "fin": "2026-10-18",
+   "etiqueta": "12–18 oct 2026"
+  },
+  "moneda": "UYU (pesos uruguayos), con vista en USD",
+  "monedaCodigo": "UYU",
+  "tipoCambio": {
+   "uyuPorUsd": 40.21,
+   "fuente": "Promedio del cierre USD/UYU del 12 al 16 de octubre de 2026 (40,2390; 40,1870; 40,1870; 40,2010; 40,2550), Pound Sterling Live",
+   "url": "https://www.poundsterlinglive.com/history/USD-UYU-2026",
+   "confirmar": true
+  },
+  "versiones": [
+   {
+    "fecha": "2026-10-19",
+    "nota": "P282 y P321 reemplazados por exportaciones nuevas: P282 ahora trae Clics en el enlace y CPC (todos); P321 trae Nombre de la página y CPC (todos). Las cifras de gasto e impresiones subieron levemente; los registros no cambiaron."
+   }
+  ],
+  "objetivo": "Registros completados en el sitio web",
+  "kpiRanking": {
+   "campo": "costoPorRegistro",
+   "descripcion": "costo por registro (menor es mejor)",
+   "desempate": "CTR (todos), mayor primero"
+  },
+  "umbral": {
+   "gastoMin": 1000,
+   "impresionesMin": 1000
+  },
+  "cuentas": [
+   {
+    "id": "P282",
+    "paises": [
+     "CR",
+     "GT"
+    ],
+    "tieneClicsEnlace": true,
+    "faltantes": [
+     "Configuración de atribución",
+     "Nombre de la página",
+     "Inicio / Finalización del anuncio"
+    ],
+    "extras": [
+     "CPC (todos)"
+    ]
+   },
+   {
+    "id": "P287",
+    "paises": [
+     "CR",
+     "GT"
+    ],
+    "tieneClicsEnlace": true,
+    "faltantes": [],
+    "extras": [
+     "Nombre de la página (HoloDesk)",
+     "Configuración de atribución",
+     "CPC (todos)"
+    ]
+   },
+   {
+    "id": "P321",
+    "paises": [
+     "CR",
+     "GT",
+     "HN"
+    ],
+    "tieneClicsEnlace": true,
+    "faltantes": [],
+    "extras": [
+     "Nombre de la página (Digital Room)",
+     "Configuración de atribución",
+     "CPC (todos)"
+    ]
+   }
+  ],
+  "archivos": [
+   {
+    "cuenta": "P282",
+    "archivo": "P282.xlsx (versión actualizada, 19-oct)",
+    "hoja": "Raw Data Report",
+    "filas": 19
+   },
+   {
+    "cuenta": "P287",
+    "archivo": "P287-oct-12-2026-al-oct-18-2026.xlsx",
+    "hoja": "Raw Data Report",
+    "filas": 12
+   },
+   {
+    "cuenta": "P321",
+    "archivo": "P321-oct-12-2026-al-oct-18-2026_1.xlsx (versión actualizada, 19-oct)",
+    "hoja": "Raw Data Report",
+    "filas": 17
+   }
+  ],
+  "controlExcel": {
+   "porCuenta": {
+    "P282": {
+     "gasto": 48542.020149,
+     "registros": 301.0,
+     "filas": 19
+    },
+    "P287": {
+     "gasto": 24173.8,
+     "registros": 77.0,
+     "filas": 12
+    },
+    "P321": {
+     "gasto": 62024.360093,
+     "registros": 577.0,
+     "filas": 17
+    }
+   },
+   "total": {
+    "gasto": 134740.18024269002,
+    "registros": 955.0
+   },
+   "manuales": {
+    "paisCR": {
+     "cpr": 98.65768656709513,
+     "cpm": 231.80413365788547
+    },
+    "cuentaP287": {
+     "cpr": 313.94545454545454,
+     "cpcEnlace": 24.00575968222443
+    },
+    "anuncio": {
+     "costoPorResultadoExcel": 45.43294118,
+     "cpmExcel": 170.8845076
+    }
+   },
+   "clavesDuplicadas": 0
+  },
+  "limitaciones": [
+   "Una sola semana: no hay comparación contra la semana anterior. La estructura queda lista en DATA.semanaAnterior.",
+   "Sin desglose por día: no se muestra tendencia diaria ni se puede ver la evolución de la frecuencia.",
+   "El alcance se suma entre anuncios; la frecuencia agregada (impresiones / alcance) puede subestimarse porque una persona puede contarse más de una vez.",
+   "La conversión a USD usa una tasa única de referencia para toda la semana; Meta factura en UYU.",
+   "Los anuncios con gasto mínimo, sin resultados o inactivos cuentan en los totales pero no entran al ranking.",
+   "Los reportes no traen segmentación, landing ni miniaturas: las causas quedan como hipótesis."
+  ],
+  "supuestos": [
+   "Montos originales en UYU. La vista USD divide por 40,21 UYU por dólar (promedio de cierre del 12 al 16 de octubre). [CONFIRMAR tasa: BCU, tasa del banco o tasa interna]",
+   "P282 y P321 se tomaron de las exportaciones nuevas del 19-oct; P287 se mantiene de la exportación anterior.",
+   "KPI del ranking: costo por registro; desempate por CTR (todos). [CONFIRMAR KPI]",
+   "Umbral del ranking: gasto ≥ UYU 1.000 y ≥ 1.000 impresiones. [CONFIRMAR umbral]",
+   "Hook 0 con Hold vacío = pieza estática («N/A (estático)»). «API (CAM) CR - Ganancia CR» (P282) trae Hook 0,03 % y Hold 0: se trató como estático supuesto.",
+   "La agrupación creativa se infiere del nombre del anuncio y del conjunto; es supuesta.",
+   "Los Hook y Hold Rate vienen como proporción (0,24 = 24 %) y el CTR como porcentaje (2,39 = 2,39 %)."
+  ]
+ },
+ "anuncios": [
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Iphone",
+   "anuncio": "AD 1",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 7066,
+   "impresiones": 11872,
+   "frecuencia": 1.68015851,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 2.0,
+   "gasto": 3235.95,
+   "costoPorResultado": 1617.975,
+   "clicsEnlace": 194.0,
+   "cpcEnlace": 16.68015464,
+   "cpm": 272.5699124,
+   "ctrTodos": 1.97944744,
+   "hookRate": 0.31443733,
+   "holdRate": 0.42753817,
+   "cpcTodos": 13.77
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - NFL 3",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 864,
+   "impresiones": 1895,
+   "frecuencia": 2.19328704,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 1.0,
+   "gasto": 931.39,
+   "costoPorResultado": 931.39,
+   "clicsEnlace": 49.0,
+   "cpcEnlace": 19.00795918,
+   "cpm": 491.49868074,
+   "ctrTodos": 2.58575198,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": 19.00795918
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - Pack bienvenida",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 5698,
+   "impresiones": 9600,
+   "frecuencia": 1.68480168,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 6.0,
+   "gasto": 4066.79,
+   "costoPorResultado": 677.79833333,
+   "clicsEnlace": 135.0,
+   "cpcEnlace": 30.12437037,
+   "cpm": 423.62395833,
+   "ctrTodos": 2.09375,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": 20.23278607
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Iphone",
+   "anuncio": "AD 3",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 3561,
+   "impresiones": 6693,
+   "frecuencia": 1.87952822,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 5.0,
+   "gasto": 2578.39,
+   "costoPorResultado": 515.678,
+   "clicsEnlace": 126.0,
+   "cpcEnlace": 20.4634127,
+   "cpm": 385.23681458,
+   "ctrTodos": 2.25608845,
+   "hookRate": 0.22052891,
+   "holdRate": 0.46612466,
+   "cpcTodos": 17.07543046
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - Ganancia GT",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 6407,
+   "impresiones": 14917,
+   "frecuencia": 2.32823474,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 12.0,
+   "gasto": 5450.31,
+   "costoPorResultado": 454.1925,
+   "clicsEnlace": 246.0,
+   "cpcEnlace": 22.15573171,
+   "cpm": 365.37574579,
+   "ctrTodos": 1.96420192,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": 18.60174061
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Iphone",
+   "anuncio": "AD 2",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 6372,
+   "impresiones": 14991,
+   "frecuencia": 2.35263653,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 11.0,
+   "gasto": 4761.57,
+   "costoPorResultado": 432.87,
+   "clicsEnlace": 347.0,
+   "cpcEnlace": 13.72210375,
+   "cpm": 317.62857715,
+   "ctrTodos": 2.48148889,
+   "hookRate": 0.25335201,
+   "holdRate": 0.54634018,
+   "cpcTodos": 12.79991935
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Packbienvenida",
+   "anuncio": "API (CAM) CR - Ganancia CR",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 13998,
+   "impresiones": 26497,
+   "frecuencia": 1.89291327,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 19.0,
+   "gasto": 7639.54,
+   "costoPorResultado": 402.08105263,
+   "clicsEnlace": 302.0,
+   "cpcEnlace": 25.29649007,
+   "cpm": 288.31716798,
+   "ctrTodos": 1.4605427,
+   "hookRate": 0.00033966,
+   "holdRate": 0.0,
+   "cpcTodos": 19.74041344
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Packbienvenida",
+   "anuncio": "API (CAM) Duplica tu primer depósito",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 21109,
+   "impresiones": 29670,
+   "frecuencia": 1.40556161,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 55.0,
+   "gasto": 7810.35,
+   "costoPorResultado": 142.00636364,
+   "clicsEnlace": 536.0,
+   "cpcEnlace": 14.57154851,
+   "cpm": 263.24064712,
+   "ctrTodos": 2.62217728,
+   "hookRate": 0.24179306,
+   "holdRate": 0.34903819,
+   "cpcTodos": 10.03901028
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencer",
+   "anuncio": "AD 3 Ericka Bono de bienvenida y código",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 478,
+   "impresiones": 550,
+   "frecuencia": 1.15062762,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 1.0,
+   "gasto": 137.1,
+   "costoPorResultado": 137.1,
+   "clicsEnlace": 7.0,
+   "cpcEnlace": 19.58571429,
+   "cpm": 249.27272727,
+   "ctrTodos": 3.45454545,
+   "hookRate": 0.20909091,
+   "holdRate": 0.29565217,
+   "cpcTodos": 7.21578947
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencer",
+   "anuncio": "AD 5 KEYLA Reto Key",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 28079,
+   "impresiones": 38445,
+   "frecuencia": 1.36917269,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 106.0,
+   "gasto": 6682.9801492,
+   "costoPorResultado": 63.04698254,
+   "clicsEnlace": 718.0,
+   "cpcEnlace": 9.3077718,
+   "cpm": 173.83223174,
+   "ctrTodos": 2.6037196,
+   "hookRate": 0.24263233,
+   "holdRate": 0.24581904,
+   "cpcTodos": 6.67630385
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencer",
+   "anuncio": "AD 6 KEYLA Tips para empezar",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 14873,
+   "impresiones": 19297,
+   "frecuencia": 1.29745176,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 62.0,
+   "gasto": 3725.04,
+   "costoPorResultado": 60.08129032,
+   "clicsEnlace": 329.0,
+   "cpcEnlace": 11.32231003,
+   "cpm": 193.03725968,
+   "ctrTodos": 2.29569363,
+   "hookRate": 0.21350469,
+   "holdRate": 0.34635922,
+   "cpcTodos": 8.40866817
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencer",
+   "anuncio": "AD 2 Ericka Recorrido por la plataforma",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 2930,
+   "impresiones": 4861,
+   "frecuencia": 1.65904437,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 20.0,
+   "gasto": 1192.46,
+   "costoPorResultado": 59.623,
+   "clicsEnlace": 107.0,
+   "cpcEnlace": 11.14448598,
+   "cpm": 245.31166427,
+   "ctrTodos": 4.27895495,
+   "hookRate": 0.12836865,
+   "holdRate": 0.28205128,
+   "cpcTodos": 5.73298077
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Packbienvenida",
+   "anuncio": "API (CAM) CR - LEspañola",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 63,
+   "impresiones": 113,
+   "frecuencia": 1.79365079,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 1.0,
+   "gasto": 21.99,
+   "costoPorResultado": 21.99,
+   "clicsEnlace": 1.0,
+   "cpcEnlace": 21.99,
+   "cpm": 194.60176991,
+   "ctrTodos": 0.88495575,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": 21.99
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - Champions League 2",
+   "pais": "GT",
+   "estado": "inactive",
+   "alcance": 211,
+   "impresiones": 377,
+   "frecuencia": 1.78672986,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 129.54,
+   "costoPorResultado": null,
+   "clicsEnlace": 3.0,
+   "cpcEnlace": 43.18,
+   "cpm": 343.60742706,
+   "ctrTodos": 1.06100796,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": 32.385
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Packbienvenida",
+   "anuncio": "API (CAM) CR - CL 1",
+   "pais": "CR",
+   "estado": "inactive",
+   "alcance": 11,
+   "impresiones": 12,
+   "frecuencia": 1.09090909,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 1.92,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 160.0,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": null
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Packbienvenida",
+   "anuncio": "API (CAM) CR - NFL 1",
+   "pais": "CR",
+   "estado": "inactive",
+   "alcance": 46,
+   "impresiones": 61,
+   "frecuencia": 1.32608696,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 20.6,
+   "costoPorResultado": null,
+   "clicsEnlace": 1.0,
+   "cpcEnlace": 20.6,
+   "cpm": 337.70491803,
+   "ctrTodos": 4.91803279,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "cpcTodos": 6.86666667
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencer",
+   "anuncio": "AD 1 Diego Viajando por Europa",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 253,
+   "impresiones": 265,
+   "frecuencia": 1.04743083,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 73.44,
+   "costoPorResultado": null,
+   "clicsEnlace": 1.0,
+   "cpcEnlace": 73.44,
+   "cpm": 277.13207547,
+   "ctrTodos": 0.75471698,
+   "hookRate": 0.23018868,
+   "holdRate": 0.21311475,
+   "cpcTodos": 36.72
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencer",
+   "anuncio": "AD 3 KEYLA Reto Key",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 88,
+   "impresiones": 94,
+   "frecuencia": 1.06818182,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 22.22,
+   "costoPorResultado": null,
+   "clicsEnlace": 1.0,
+   "cpcEnlace": 22.22,
+   "cpm": 236.38297872,
+   "ctrTodos": 1.06382979,
+   "hookRate": 0.30851064,
+   "holdRate": 0.24137931,
+   "cpcTodos": 22.22
+  },
+  {
+   "cuenta": "P282",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Packbienvenida",
+   "anuncio": "API (CAM) Mensaje de un amigo",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 267,
+   "impresiones": 309,
+   "frecuencia": 1.15730337,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 60.44,
+   "costoPorResultado": null,
+   "clicsEnlace": 1.0,
+   "cpcEnlace": 60.44,
+   "cpm": 195.5987055,
+   "ctrTodos": 0.3236246,
+   "hookRate": 0.06472492,
+   "holdRate": 0.3,
+   "cpcTodos": 60.44
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) GT - PackBienvenida 3",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 20567,
+   "impresiones": 44551,
+   "frecuencia": 2.16613993,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 44.0,
+   "gasto": 10147.38,
+   "costoPorResultado": 230.62227273,
+   "clicsEnlace": 403.0,
+   "cpcEnlace": 25.17960298,
+   "cpm": 227.76997149,
+   "ctrTodos": 1.20984939,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 18.82630798
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) CR - AD GENERICO",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 5378,
+   "impresiones": 14240,
+   "frecuencia": 2.64782447,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 25.0,
+   "gasto": 7888.83,
+   "costoPorResultado": 315.5532,
+   "clicsEnlace": 293.0,
+   "cpcEnlace": 26.92433447,
+   "cpm": 553.99087079,
+   "ctrTodos": 2.44382022,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 22.66905172
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado Iphone Promo",
+   "anuncio": "API (CAM) CR - AD 1 GENERAL",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 7250,
+   "impresiones": 12986,
+   "frecuencia": 1.79117241,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 7.0,
+   "gasto": 3658.41,
+   "costoPorResultado": 522.63,
+   "clicsEnlace": 196.0,
+   "cpcEnlace": 18.66535714,
+   "cpm": 281.71954412,
+   "ctrTodos": 2.01755737,
+   "hookRate": 0.28777145,
+   "holdRate": 0.3112122,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 13.96339695
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado Iphone Promo",
+   "anuncio": "API (CAM) CR - AD 2 GENERAL",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 1677,
+   "impresiones": 3542,
+   "frecuencia": 2.11210495,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 1057.77,
+   "costoPorResultado": null,
+   "clicsEnlace": 64.0,
+   "cpcEnlace": 16.52765625,
+   "cpm": 298.63636364,
+   "ctrTodos": 2.68210051,
+   "hookRate": 0.20835686,
+   "holdRate": 0.33604336,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 11.13442105
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado Iphone Promo",
+   "anuncio": "API (CAM) CR - AD 3 GENERAL",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 1578,
+   "impresiones": 3205,
+   "frecuencia": 2.03105196,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 915.56,
+   "costoPorResultado": null,
+   "clicsEnlace": 40.0,
+   "cpcEnlace": 22.889,
+   "cpm": 285.66614665,
+   "ctrTodos": 1.52886115,
+   "hookRate": 0.21653666,
+   "holdRate": 0.56340058,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 18.68489796
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) GT - PackBienvenida 1 Pajaro",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 831,
+   "impresiones": 1282,
+   "frecuencia": 1.54271961,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 1.0,
+   "gasto": 388.79,
+   "costoPorResultado": 388.79,
+   "clicsEnlace": 7.0,
+   "cpcEnlace": 55.54142857,
+   "cpm": 303.26833073,
+   "ctrTodos": 0.85803432,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 35.34454545
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) CR - Liga Española",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 226,
+   "impresiones": 346,
+   "frecuencia": 1.53097345,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 105.67,
+   "costoPorResultado": null,
+   "clicsEnlace": 4.0,
+   "cpcEnlace": 26.4175,
+   "cpm": 305.40462428,
+   "ctrTodos": 1.44508671,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 21.134
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) CR - Champions League",
+   "pais": "CR",
+   "estado": "inactive",
+   "alcance": 22,
+   "impresiones": 25,
+   "frecuencia": 1.13636364,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 5.24,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 209.6,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": null
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) GT - Champions League 2",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 8,
+   "impresiones": 9,
+   "frecuencia": 1.125,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 2.98,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 331.11111111,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": null
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) GT - Premier League 1",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 6,
+   "impresiones": 6,
+   "frecuencia": 1.0,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 1.36,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 226.66666667,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": null
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) GT - NFL 3",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 8,
+   "impresiones": 10,
+   "frecuencia": 1.25,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 1.24,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 124.0,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": null
+  },
+  {
+   "cuenta": "P287",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado PackBienvenida",
+   "anuncio": "API (CAM) CR - (NFL 1",
+   "pais": "CR",
+   "estado": "inactive",
+   "alcance": 4,
+   "impresiones": 4,
+   "frecuencia": 1.0,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 0.57,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 142.5,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "HoloDesk",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": null
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - placa GT",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 26315,
+   "impresiones": 69068,
+   "frecuencia": 2.62466274,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 31.0,
+   "gasto": 20013.87999913,
+   "costoPorResultado": 645.60903223,
+   "clicsEnlace": 1021.0,
+   "cpcEnlace": 19.6022331,
+   "cpm": 289.77066079,
+   "ctrTodos": 2.38895002,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 12.12962424
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) HN - Registro Completado",
+   "conjunto": "API (CAM) HN - Registro Completado - General",
+   "anuncio": "API (CAM) HN - plca bnda",
+   "pais": "HN",
+   "estado": "active",
+   "alcance": 15356,
+   "impresiones": 73768,
+   "frecuencia": 4.80385517,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 68.0,
+   "gasto": 12258.47000571,
+   "costoPorResultado": 180.27161773,
+   "clicsEnlace": 653.0,
+   "cpcEnlace": 18.77254212,
+   "cpm": 166.17598424,
+   "ctrTodos": 1.32442251,
+   "hookRate": 0.0500488,
+   "holdRate": 0.45828819,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 12.54705221
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencers",
+   "anuncio": "AD 3 ERICKA Bono de bienvenida y código - Copia",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 28700,
+   "impresiones": 51725,
+   "frecuencia": 1.80226481,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 149.0,
+   "gasto": 8665.2,
+   "costoPorResultado": 58.1557047,
+   "clicsEnlace": 1245.0,
+   "cpcEnlace": 6.96,
+   "cpm": 167.52440793,
+   "ctrTodos": 3.39294345,
+   "hookRate": 0.24274529,
+   "holdRate": 0.31658171,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 4.9374359
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencers",
+   "anuncio": "AD 6 KEYLA Tips para empezar",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 27431,
+   "impresiones": 40678,
+   "frecuencia": 1.48292078,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 153.0,
+   "gasto": 6951.24,
+   "costoPorResultado": 45.43294118,
+   "clicsEnlace": 990.0,
+   "cpcEnlace": 7.02145455,
+   "cpm": 170.8845076,
+   "ctrTodos": 3.61374699,
+   "hookRate": 0.294926,
+   "holdRate": 0.39001417,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 4.72873469
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencers",
+   "anuncio": "AD 5 KEYLA Registro desde el sillón",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 24847,
+   "impresiones": 35186,
+   "frecuencia": 1.41610657,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 135.0,
+   "gasto": 5364.13,
+   "costoPorResultado": 39.7342963,
+   "clicsEnlace": 774.0,
+   "cpcEnlace": 6.93040052,
+   "cpm": 152.45069062,
+   "ctrTodos": 3.31666004,
+   "hookRate": 0.27795146,
+   "holdRate": 0.25194274,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 4.59651243
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) HN - Registro Completado",
+   "conjunto": "API (CAM) HN - Registro Completado - General",
+   "anuncio": "API (CAM) HN - Deportiva",
+   "pais": "HN",
+   "estado": "active",
+   "alcance": 6626,
+   "impresiones": 13378,
+   "frecuencia": 2.019016,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 9.0,
+   "gasto": 2676.06,
+   "costoPorResultado": 297.34,
+   "clicsEnlace": 174.0,
+   "cpcEnlace": 15.37965517,
+   "cpm": 200.03438481,
+   "ctrTodos": 1.44266707,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 13.86559585
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - General",
+   "anuncio": "API (CAM) CR - placa pdpo",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 4240,
+   "impresiones": 7226,
+   "frecuencia": 1.70424528,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 7.0,
+   "gasto": 2440.08,
+   "costoPorResultado": 348.58285714,
+   "clicsEnlace": 79.0,
+   "cpcEnlace": 30.88708861,
+   "cpm": 337.68059784,
+   "ctrTodos": 1.61915306,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 20.85538462
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) HN - Registro Completado",
+   "conjunto": "API (CAM) HN - Registro Completado - General",
+   "anuncio": "API (CAM) HN - Recompensa",
+   "pais": "HN",
+   "estado": "active",
+   "alcance": 4380,
+   "impresiones": 8848,
+   "frecuencia": 2.02009132,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 5.0,
+   "gasto": 1462.70008865,
+   "costoPorResultado": 292.54001773,
+   "clicsEnlace": 107.0,
+   "cpcEnlace": 13.67009429,
+   "cpm": 165.31420532,
+   "ctrTodos": 1.36754069,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 12.08843048
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencers",
+   "anuncio": "AD 2 ERICKA Recorrido por la plataforma",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 3560,
+   "impresiones": 5278,
+   "frecuencia": 1.48258427,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 19.0,
+   "gasto": 982.95,
+   "costoPorResultado": 51.73421053,
+   "clicsEnlace": 154.0,
+   "cpcEnlace": 6.38279221,
+   "cpm": 186.23531641,
+   "ctrTodos": 3.58090186,
+   "hookRate": 0.20538083,
+   "holdRate": 0.34225092,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 5.20079365
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - Placa Beisbol",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 1145,
+   "impresiones": 2403,
+   "frecuencia": 2.09868996,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 295.74,
+   "costoPorResultado": null,
+   "clicsEnlace": 21.0,
+   "cpcEnlace": 14.08285714,
+   "cpm": 123.07116105,
+   "ctrTodos": 0.99875156,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 12.3225
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencers",
+   "anuncio": "AD 1 Diego Viajando por Europa",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 923,
+   "impresiones": 1040,
+   "frecuencia": 1.12676056,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 259.07,
+   "costoPorResultado": null,
+   "clicsEnlace": 8.0,
+   "cpcEnlace": 32.38375,
+   "cpm": 249.10576923,
+   "ctrTodos": 1.53846154,
+   "hookRate": 0.24807692,
+   "holdRate": 0.28682171,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 16.191875
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - General",
+   "anuncio": "API (CAM) CR - placa oct",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 800,
+   "impresiones": 1086,
+   "frecuencia": 1.3575,
+   "tipoResultado": "Registros completados en el sitio web",
+   "resultados": 1.0,
+   "gasto": 238.53,
+   "costoPorResultado": 238.53,
+   "clicsEnlace": 7.0,
+   "cpcEnlace": 34.07571429,
+   "cpm": 219.64088398,
+   "ctrTodos": 1.19705341,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 18.34846154
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) GT - Registro Completado",
+   "conjunto": "API (CAM) GT - Registro Completado - General",
+   "anuncio": "API (CAM) GT - placa dpot",
+   "pais": "GT",
+   "estado": "active",
+   "alcance": 323,
+   "impresiones": 564,
+   "frecuencia": 1.74613003,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 157.87,
+   "costoPorResultado": null,
+   "clicsEnlace": 11.0,
+   "cpcEnlace": 14.35181818,
+   "cpm": 279.91134752,
+   "ctrTodos": 2.12765957,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 13.15583333
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - General",
+   "anuncio": "API (CAM) CR - placa animada",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 451,
+   "impresiones": 593,
+   "frecuencia": 1.31485588,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 127.08,
+   "costoPorResultado": null,
+   "clicsEnlace": 6.0,
+   "cpcEnlace": 21.18,
+   "cpm": 214.30016863,
+   "ctrTodos": 1.01180438,
+   "hookRate": 0.13659359,
+   "holdRate": 0.77777778,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 21.18
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - General",
+   "anuncio": "API (CAM) CR - placa dpor - Copia",
+   "pais": "CR",
+   "estado": "inactive",
+   "alcance": 44,
+   "impresiones": 76,
+   "frecuencia": 1.72727273,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 85.9,
+   "costoPorResultado": null,
+   "clicsEnlace": 2.0,
+   "cpcEnlace": 42.95,
+   "cpm": 1130.26315789,
+   "ctrTodos": 2.63157895,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 42.95
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - Influencers",
+   "anuncio": "AD 4 KEYLA Reto Key",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 144,
+   "impresiones": 156,
+   "frecuencia": 1.08333333,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 45.41,
+   "costoPorResultado": null,
+   "clicsEnlace": 2.0,
+   "cpcEnlace": 22.705,
+   "cpm": 291.08974359,
+   "ctrTodos": 1.92307692,
+   "hookRate": 0.23076923,
+   "holdRate": 0.41666667,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": 15.13666667
+  },
+  {
+   "cuenta": "P321",
+   "campana": "API (CAM) CR - Registro Completado",
+   "conjunto": "API (CAM) CR - Registro Completado - General",
+   "anuncio": "API (CAM) CR - placa dpor",
+   "pais": "CR",
+   "estado": "active",
+   "alcance": 1,
+   "impresiones": 1,
+   "frecuencia": 1.0,
+   "tipoResultado": null,
+   "resultados": null,
+   "gasto": 0.05,
+   "costoPorResultado": null,
+   "clicsEnlace": null,
+   "cpcEnlace": null,
+   "cpm": 50.0,
+   "ctrTodos": 0.0,
+   "hookRate": 0.0,
+   "holdRate": null,
+   "pagina": "Digital Room",
+   "atribucion": "7 días tras clic, 1 día tras visualización o 1 día tras visualización activa",
+   "cpcTodos": null
+  }
+ ],
+ "semanaAnterior": null
+};
+
+/* =========================================================
+   FORMATO
+   ========================================================= */
+const NF0=new Intl.NumberFormat("es-UY",{maximumFractionDigits:0});
+const NF2=new Intl.NumberFormat("es-UY",{minimumFractionDigits:2,maximumFractionDigits:2});
+const NF1=new Intl.NumberFormat("es-UY",{minimumFractionDigits:1,maximumFractionDigits:1});
+const NA_REP='<span class="na">No disponible en el reporte</span>';
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ok=v=>v!==null&&v!==undefined&&!Number.isNaN(v)&&Number.isFinite(v);
+const CUR={code:"UYU",rate:DATA.meta.tipoCambio.uyuPorUsd};
+try{const s=localStorage.getItem("azarCur");if(s==="USD"||s==="UYU")CUR.code=s;const r=parseFloat(localStorage.getItem("azarRate"));if(r>1)CUR.rate=r}catch(e){}
+const conv=v=>CUR.code==="USD"?v/CUR.rate:v;
+const fmtMoney=v=>{if(!ok(v))return"—";const x=conv(v),lim=CUR.code==="USD"?10:100;return `${CUR.code} ${Math.abs(x)>=lim?NF0.format(x):NF2.format(x)}`};
+const fmtUYU=v=>!ok(v)?"—":`UYU ${NF2.format(v)}`;
+const fmtInt=v=>!ok(v)?"—":NF0.format(v);
+const fmtPct=(v,base100)=>!ok(v)?"—":`${NF1.format(base100?v:v*100)} %`;
+const fmtFreq=v=>!ok(v)?"—":NF2.format(v);
+const fmtX=v=>!ok(v)?"—":`${NF1.format(v)}×`;
+const PAIS_N={CR:"Costa Rica",GT:"Guatemala",HN:"Honduras"};
+const paisTag=p=>`<span class="pais ${p}"><span>${p}</span></span>`;
+const accTag=a=>`<span class="acc ${a}"><i></i>${a}</span>`;
+
+/* =========================================================
+   CÁLCULO — todo desde DATA.anuncios
+   ========================================================= */
+const ADS=DATA.anuncios;
+const keyOf=a=>[a.cuenta,a.campana,a.conjunto,a.anuncio].join(" | ");
+const regs=a=>a.resultados||0;
+const tieneResultado=a=>ok(a.resultados)&&a.resultados>0;
+const cuentasConClics=new Set(DATA.meta.cuentas.filter(c=>c.tieneClicsEnlace).map(c=>c.id));
+
+/* Formato de pieza: Hook 0 + Hold vacío = estático. Hook < 0,1 % con Hold 0 = estático supuesto (dato atípico). */
+function formatoPieza(a){
+ if(a.hookRate===0&&!ok(a.holdRate))return{tipo:"estatico",label:"Estático",regla:"Hook 0 y Hold vacío"};
+ if(ok(a.hookRate)&&a.hookRate<0.001&&a.holdRate===0)return{tipo:"estatico",label:"Estático (supuesto)",regla:"Hook < 0,1 % y Hold 0: dato atípico"};
+ if(ok(a.hookRate)&&ok(a.holdRate))return{tipo:"video",label:"Video / animado",regla:"Hook y Hold con valor"};
+ return{tipo:"desconocido",label:"Sin dato",regla:"Sin Hook/Hold"};
+}
+/* Grupo creativo por nombre (supuesto). El orden importa. */
+const GRUPOS=[
+ {id:"influencers",label:"Influencers",test:a=>/\b(KEYLA|ERICKA|DIEGO)\b/i.test(a.anuncio),regla:"Nombre con KEYLA, ERICKA o Diego"},
+ {id:"iphone",label:"iPhone",test:a=>/iphone/i.test(a.conjunto),regla:"Conjunto «Iphone» / «Iphone Promo»"},
+ {id:"pack",label:"Pack de bienvenida",test:a=>/pack ?bienvenida/i.test(a.anuncio),regla:"Nombre del anuncio con «Pack bienvenida»"},
+ {id:"placas",label:"Placas",test:a=>/\b(placa|plca)\b/i.test(a.anuncio),regla:"Nombre con «placa» o «plca»"},
+ {id:"promo",label:"Promo de bono",test:a=>/ganancia|duplica|recompensa/i.test(a.anuncio),regla:"Nombre con «Ganancia», «Duplica» o «Recompensa»"},
+ {id:"deportes",label:"Deportes (NFL y ligas)",test:a=>/nfl|champions|\bcl \d|liga|lespa|premier|deportiva|beisbol/i.test(a.anuncio),regla:"Nombre con NFL, Champions, CL, Liga, Premier o Deportiva"},
+ {id:"genericos",label:"Genéricos",test:()=>true,regla:"Sin palabra clave de los grupos anteriores"}];
+function grupoCreativo(a){return GRUPOS.find(g=>g.test(a))}
+
+function enUmbral(a){return a.gasto>=DATA.meta.umbral.gastoMin&&a.impresiones>=DATA.meta.umbral.impresionesMin}
+
+/* Agregado desde totales (nunca promedios de ratios). */
+function agregar(list){
+ const s={n:list.length,gasto:0,registros:0,impresiones:0,alcance:0,ctrW:0,clics:0,gastoConClics:0,imprConClics:0,regsConClics:0,hookW:0,holdW:0,imprVideo:0,cuentasClics:new Set()};
+ list.forEach(a=>{
+  s.gasto+=a.gasto||0;s.registros+=regs(a);s.impresiones+=a.impresiones||0;s.alcance+=a.alcance||0;
+  if(ok(a.ctrTodos))s.ctrW+=a.ctrTodos*(a.impresiones||0);
+  if(cuentasConClics.has(a.cuenta)){s.cuentasClics.add(a.cuenta);s.clics+=a.clicsEnlace||0;s.gastoConClics+=a.gasto||0;s.imprConClics+=a.impresiones||0;s.regsConClics+=regs(a)}
+  if(formatoPieza(a).tipo==="video"){s.hookW+=a.hookRate*a.impresiones;s.holdW+=a.holdRate*a.impresiones;s.imprVideo+=a.impresiones}
+ });
+ s.cpr=s.registros>0?s.gasto/s.registros:null;
+ s.cpm=s.impresiones>0?s.gasto/s.impresiones*1000:null;
+ s.ctr=s.impresiones>0?s.ctrW/s.impresiones:null;          // en %, ponderado por impresiones
+ s.frecuencia=s.alcance>0?s.impresiones/s.alcance:null;    // alcance sumado: puede duplicar personas
+ s.cpcEnlace=s.clics>0?s.gastoConClics/s.clics:null;       // solo cuentas con columna de clics
+ s.hook=s.imprVideo>0?s.hookW/s.imprVideo:null;
+ s.hold=s.imprVideo>0?s.holdW/s.imprVideo:null;
+ return s;
+}
+const agruparPor=(list,fn)=>{const m=new Map();list.forEach(a=>{const k=fn(a);if(!m.has(k))m.set(k,[]);m.get(k).push(a)});return m};
+function aggPor(campo,list=ADS){const m=agruparPor(list,a=>a[campo]);return [...m.entries()].map(([k,l])=>({k,...agregar(l)}))}
+
+function ranking(filtro){
+ const base=ADS.filter(a=>(!filtro.pais||a.pais===filtro.pais)&&(!filtro.cuenta||a.cuenta===filtro.cuenta));
+ const el=base.filter(enUmbral);
+ const conReg=el.filter(tieneResultado).map(a=>({a,cpr:a.gasto/a.resultados}));
+ const ord=(x,y)=>x.cpr-y.cpr||(y.a.ctrTodos||0)-(x.a.ctrTodos||0);
+ const top=[...conReg].sort(ord).slice(0,3);
+ const topKeys=new Set(top.map(x=>keyOf(x.a)));
+ const sinRes=el.filter(a=>!tieneResultado(a)).sort((x,y)=>y.gasto-x.gasto).map(a=>({a,cpr:null,sinResultado:true}));
+ const peores=[...conReg].filter(x=>!topKeys.has(keyOf(x.a))).sort((x,y)=>y.cpr-x.cpr||(x.a.ctrTodos||0)-(y.a.ctrTodos||0));
+ const bot=[...sinRes,...peores].slice(0,3);
+ return{base,elegibles:el,top,bot,agg:agregar(base),aggEleg:agregar(el)};
+}
+function compararSemanas(actual,anterior){ // listo para cuando DATA.semanaAnterior tenga datos
+ if(!anterior||!anterior.anuncios)return null;
+ const prev=agregar(anterior.anuncios);
+ const d=(a,b)=>ok(a)&&ok(b)&&b!==0?(a-b)/b:null;
+ return{gasto:d(actual.gasto,prev.gasto),registros:d(actual.registros,prev.registros),cpr:d(actual.cpr,prev.cpr),impresiones:d(actual.impresiones,prev.impresiones),alcance:d(actual.alcance,prev.alcance),cpm:d(actual.cpm,prev.cpm),ctr:d(actual.ctr,prev.ctr)};
+}
+const share=(v,t)=>t>0?v/t:null;
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+const $=s=>document.querySelector(s);
+const TOT=agregar(ADS);
+const PA=aggPor("pais").sort((a,b)=>b.gasto-a.gasto);
+const CU=aggPor("cuenta").sort((a,b)=>a.k.localeCompare(b.k));
+const CMP=compararSemanas(TOT,DATA.semanaAnterior);
+const deltaTxt=(k,lowerIsBetter)=>{if(!CMP)return"Sin semana anterior";const v=CMP[k];if(!ok(v))return"—";const up=v>0,good=lowerIsBetter?!up:up;return `${up?"▲":"▼"} ${NF1.format(Math.abs(v*100))} % ${good?"(mejor)":"(peor)"}`};
+
+function renderHeader(){
+ $("#wkLabel").textContent=DATA.meta.semana.etiqueta;
+ $("#rate").value=CUR.rate;
+ const sync=()=>document.querySelectorAll(".cur").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===CUR.code));sync();
+ document.querySelector(".curtg").addEventListener("click",e=>{const b=e.target.closest(".cur");if(!b)return;CUR.code=b.dataset.c;try{localStorage.setItem("azarCur",CUR.code)}catch(err){}sync();renderContent()});
+ $("#rate").addEventListener("change",e=>{const r=parseFloat(String(e.target.value).replace(",","."));if(r>1){CUR.rate=r;try{localStorage.setItem("azarRate",r)}catch(err){}renderContent()}else e.target.value=CUR.rate});
+ const sec=[...document.querySelectorAll("section.blk")],links=[...document.querySelectorAll(".tabs a")];
+ const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+e.target.id))}})},{rootMargin:"-40% 0px -55% 0px"});
+ sec.forEach(s=>io.observe(s));
+}
+function renderKPIs(){
+ $("#resLead").innerHTML=`${DATA.meta.semana.desde} al ${DATA.meta.semana.hasta} · ${TOT.n} anuncios en ${CU.length} cuentas y ${PA.length} países.<br><span class="faint">${CUR.code==="USD"?`Montos en USD a ${NF2.format(CUR.rate)} UYU por dólar (tasa de referencia, editable arriba). Montos originales en UYU.`:`Montos en UYU, moneda del reporte. Cambia a USD arriba.`}</span>`;
+ const K=[
+  ["Inversión total",fmtMoney(TOT.gasto),deltaTxt("gasto",false),"main"],
+  ["Registros",fmtInt(TOT.registros),deltaTxt("registros",false)],
+  ["Costo por registro",fmtMoney(TOT.cpr),deltaTxt("cpr",true),"main"],
+  ["Impresiones",fmtInt(TOT.impresiones),deltaTxt("impresiones",false)],
+  ["Alcance (sumado)",fmtInt(TOT.alcance),"Puede duplicar personas"],
+  ["CPM",fmtMoney(TOT.cpm),deltaTxt("cpm",true)],
+  ["CTR (todos)",fmtPct(TOT.ctr,true),"Ponderado por impresiones"]];
+ $("#kpis").innerHTML=K.map(([l,v,d,c])=>`<div class="kpi ${c||""}"><span class="l">${l}</span><span class="v">${v}</span><span class="d">${d}</span></div>`).join("");
+ $("#cmpBox").innerHTML=CMP?`<span>Comparación contra ${esc(DATA.semanaAnterior.etiqueta)} activa.</span>`:`<span class="tag t-mut">Pendiente</span><span><b>Comparación semanal.</b> Los indicadores de variación se activan cuando se carguen los reportes del 5 al 11 de octubre en <span class="mono">DATA.semanaAnterior</span>. No se calculan comparaciones con una sola semana.</span>`;
+}
+function distRow(label,items,campo,tot){
+ return `<div class="drow"><span class="lab">${label}</span><div class="dbar" role="img" aria-label="${label}: ${items.map(i=>`${i.k} ${NF1.format(share(i[campo],tot)*100)} %`).join(", ")}">${items.map(i=>{const p=share(i[campo],tot)*100;return `<div class="${i.k}" style="width:${p}%" data-tip="<b>${i.k}</b>${label}: ${NF1.format(p)} %<br>${campo==="gasto"?fmtMoney(i.gasto):fmtInt(i.registros)+" registros"}">${p>=18?`${i.k} ${NF1.format(p)} %`:""}</div>`}).join("")}</div><span></span><div class="dvals">${items.map(i=>`<span>${i.k} <b>${NF1.format(share(i[campo],tot)*100)} %</b></span>`).join("")}</div></div>`;
+}
+function renderDist(){
+ const po=["CR","GT","HN"].map(k=>PA.find(p=>p.k===k)).filter(Boolean);
+ $("#dist").innerHTML=`<div class="faint" style="font-size:11px;text-transform:uppercase;letter-spacing:.05em">Por país</div>${distRow("Gasto",po,"gasto",TOT.gasto)}${distRow("Registros",po,"registros",TOT.registros)}
+ <div class="faint" style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-top:6px">Por cuenta</div>${distRow("Gasto",CU,"gasto",TOT.gasto)}${distRow("Registros",CU,"registros",TOT.registros)}`;
+}
+function renderFunnel(){
+ const sub=agregar(ADS.filter(a=>cuentasConClics.has(a.cuenta)));
+ const steps=[["Impresiones",sub.impresiones],["Clics en el enlace",sub.clics],["Registros",sub.registros]];const tipC=[...cuentasConClics].join(", ");
+ const max=steps[0][1];
+ $("#funnel").innerHTML=steps.map(([l,v],i)=>{const w=Math.max(.4,v/max*100);return `${i?`<div class="fconv">↓ ${fmtPct(v/steps[i-1][1])} ${i===1?"de las impresiones hacen clic (CTR de enlace)":"de los clics se registran"}</div>`:""}<div class="fst"><span>${l}</span><div class="bar" data-tip="<b>${l}</b>${fmtInt(v)} · ${tipC}"><i style="width:${w}%"></i></div><span class="n">${fmtInt(v)}</span></div>`}).join("");
+ const p282=CU.find(c=>c.k==="P282");
+ const sin=CU.filter(c=>!cuentasConClics.has(c.k));
+ $("#funNote").innerHTML=sin.length?`Solo ${[...cuentasConClics].join(" y ")}: ${sin.map(c=>c.k).join(", ")} no trae «Clics en el enlace». CPC de enlace: <b class="mono">${fmtMoney(sub.cpcEnlace)}</b>.`:`Incluye las tres cuentas: P282 ya trae «Clics en el enlace» en la exportación nueva. CPC de enlace consolidado: <b class="mono">${fmtMoney(sub.cpcEnlace)}</b>.`;
+}
+function renderWeekPts(){
+ const cr=PA.find(p=>p.k==="CR"),gt=PA.find(p=>p.k==="GT"),hn=PA.find(p=>p.k==="HN");
+ const mx=agregar([]),combos=comboList().filter(c=>c.gasto>=1000);
+ const best=[...combos].sort((a,b)=>a.cpr-b.cpr)[0],worst=[...combos].sort((a,b)=>b.cpr-a.cpr)[0];
+ const bajo=ADS.filter(a=>!enUmbral(a)),sinRes=ADS.filter(a=>!tieneResultado(a));
+ const L=[
+  `<b>${PAIS_N[cr.k]}</b> concentró ${fmtPct(share(cr.gasto,TOT.gasto))} del gasto y generó ${fmtPct(share(cr.registros,TOT.registros))} de los registros, con un costo por registro de ${fmtMoney(cr.cpr)}.`,
+  `<b>Guatemala</b> recibió ${fmtPct(share(gt.gasto,TOT.gasto))} del gasto pero solo ${fmtPct(share(gt.registros,TOT.registros))} de los registros: cada registro costó ${fmtMoney(gt.cpr)}, ${fmtX(gt.cpr/cr.cpr)} lo que costó en Costa Rica.`,
+  `<b>Honduras</b> (solo P321) tuvo ${fmtPct(share(hn.gasto,TOT.gasto))} del gasto y ${fmtPct(share(hn.registros,TOT.registros))} de los registros, a ${fmtMoney(hn.cpr)} por registro.`,
+  `La mejor combinación cuenta-país fue <b>${best.cuenta} ${best.pais}</b> (${fmtMoney(best.cpr)} por registro) y la peor <b>${worst.cuenta} ${worst.pais}</b> (${fmtMoney(worst.cpr)}): ${fmtX(worst.cpr/best.cpr)} de diferencia.`,
+  `${bajo.length} de ${TOT.n} anuncios quedaron bajo el umbral del ranking y sumaron ${fmtMoney(agregar(bajo).gasto)} (${fmtPct(share(agregar(bajo).gasto,TOT.gasto))} del gasto). ${sinRes.length} anuncios no generaron registros (${fmtMoney(agregar(sinRes).gasto)}).`];
+ $("#weekPts").innerHTML=L.map((t,i)=>`<li><b class="n">${i+1}</b><span>${t}</span></li>`).join("");
+}
+function tablaAgg(rows,tot,primera,etiqueta){
+ const finite=rows.filter(r=>ok(r.cpr)),best=[...finite].sort((a,b)=>a.cpr-b.cpr)[0],worst=[...finite].sort((a,b)=>b.cpr-a.cpr)[0];
+ const flag=r=>r===best?` <span class="tag t-good">▲ más eficiente</span>`:r===worst?` <span class="tag t-bad">▼ menos eficiente</span>`:"";
+ return `<thead><tr><th>${primera}</th><th>Inversión</th><th>% gasto</th><th>Registros</th><th>% registros</th><th>Costo / registro</th><th>CPM</th><th>CTR (todos)</th><th>Frecuencia*</th><th>Anuncios</th></tr></thead><tbody>
+ ${rows.map(r=>`<tr><td>${etiqueta(r.k)}${flag(r)}</td><td class="num">${fmtMoney(r.gasto)}</td><td class="num">${fmtPct(share(r.gasto,tot.gasto))}</td><td class="num">${fmtInt(r.registros)}</td><td class="num">${fmtPct(share(r.registros,tot.registros))}</td><td class="num">${fmtMoney(r.cpr)}</td><td class="num">${fmtMoney(r.cpm)}</td><td class="num">${fmtPct(r.ctr,true)}</td><td class="num">${fmtFreq(r.frecuencia)}</td><td class="num">${r.n}</td></tr>`).join("")}</tbody>
+ <tfoot><tr><td>Total</td><td class="num">${fmtMoney(tot.gasto)}</td><td class="num">100,0 %</td><td class="num">${fmtInt(tot.registros)}</td><td class="num">100,0 %</td><td class="num">${fmtMoney(tot.cpr)}</td><td class="num">${fmtMoney(tot.cpm)}</td><td class="num">${fmtPct(tot.ctr,true)}</td><td class="num">${fmtFreq(tot.frecuencia)}</td><td class="num">${tot.n}</td></tr></tfoot>`;
+}
+function comboList(){const m=agruparPor(ADS,a=>a.cuenta+"|"+a.pais);return [...m.entries()].map(([k,l])=>{const [cuenta,pais]=k.split("|");return{cuenta,pais,...agregar(l)}})}
+function renderPais(){
+ $("#tPais").innerHTML=tablaAgg(PA,TOT,"País",k=>`${paisTag(k)} <span class="faint">${PAIS_N[k]}${k==="HN"?" · solo P321":""}</span>`);
+ const combos=comboList(),maxC=Math.max(...combos.filter(c=>ok(c.cpr)).map(c=>c.cpr));
+ const cell=(p,c)=>{const x=combos.find(o=>o.pais===p&&o.cuenta===c);if(!x)return`<td><div class="mxc empty">Sin datos en ${c}</div></td>`;return `<td><div class="mxc" data-tip="<b>${c} · ${p}</b>${fmtMoney(x.gasto)} · ${fmtInt(x.registros)} registros<br>CPM ${fmtMoney(x.cpm)} · CTR ${fmtPct(x.ctr,true)}"><span class="big">${fmtMoney(x.cpr)}</span><span class="sm">${fmtMoney(x.gasto)} · ${fmtInt(x.registros)} reg.</span><span class="mbar"><i style="width:${ok(x.cpr)?x.cpr/maxC*100:0}%"></i></span></div></td>`};
+ $("#tMx").innerHTML=`<thead><tr><th>País</th>${CU.map(c=>`<th>${accTag(c.k)}</th>`).join("")}<th>Total país</th></tr></thead><tbody>${["CR","GT","HN"].map(p=>{const t=PA.find(x=>x.k===p);return `<tr><td>${paisTag(p)}</td>${CU.map(c=>cell(p,c.k)).join("")}<td><div class="mxc"><span class="big">${fmtMoney(t.cpr)}</span><span class="sm">${fmtMoney(t.gasto)} · ${fmtInt(t.registros)} reg.</span></div></td></tr>`}).join("")}</tbody>`;
+}
+function renderCuenta(){
+ $("#tCta").innerHTML=tablaAgg(CU,TOT,"Cuenta",k=>`${accTag(k)} <span class="faint">${DATA.meta.cuentas.find(c=>c.id===k).paises.join(", ")}</span>`);
+ const combos=comboList().sort((a,b)=>b.gasto-a.gasto);
+ const med=[...combos].map(c=>c.gasto).sort((a,b)=>a-b)[Math.floor(combos.length/2)];
+ const flag=c=>{if(!ok(c.cpr))return`<span class="tag t-mut">Sin registros</span>`;if(c.gasto>=med&&c.cpr>TOT.cpr)return`<span class="tag t-bad">▼ Gasto alto, costo alto</span>`;if(c.gasto<med&&c.cpr<TOT.cpr)return`<span class="tag t-good">▲ Eficiente, poco presupuesto</span>`;if(c.cpr<TOT.cpr)return`<span class="tag t-good">▲ Bajo el promedio</span>`;return`<span class="tag t-warn">Sobre el promedio</span>`};
+ $("#tCombo").innerHTML=`<thead><tr><th>Cuenta · país</th><th>Inversión</th><th>Costo / registro</th><th class="l">Lectura</th></tr></thead><tbody>${combos.map(c=>`<tr><td>${accTag(c.cuenta)} ${paisTag(c.pais)}</td><td class="num">${fmtMoney(c.gasto)}</td><td class="num">${fmtMoney(c.cpr)}</td><td class="l">${flag(c)}</td></tr>`).join("")}</tbody>`;
+ $("#comboNote").innerHTML=`«Gasto alto» = inversión igual o mayor a la mediana de las combinaciones (${fmtMoney(med)}). «Costo alto» = costo por registro mayor al consolidado (${fmtMoney(TOT.cpr)}).`;
+ $("#missing").innerHTML=DATA.meta.cuentas.map(c=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)">${accTag(c.id)}<div style="margin-top:6px;font-size:13px">${c.faltantes.length?`<span class="muted">No trae:</span> ${c.faltantes.map(esc).join(", ")}`:`<span class="muted">Trae todas las métricas comunes.</span>`}</div>${c.extras.length?`<div style="font-size:12.5px;margin-top:4px" class="faint">Extra (contexto): ${c.extras.map(esc).join(", ")}</div>`:""}</div>`).join("")+`<p class="note">CPC de enlace consolidado: ${CU.map(c=>`${c.k} ${cuentasConClics.has(c.k)?fmtMoney(c.cpcEnlace):"no disponible"}`).join(" · ")}.</p>`;
+}
+
+/* ---- Anuncios ---- */
+const F={pais:"",cuenta:""};let SORT={k:"gasto",dir:-1};
+function hookCell(a,k){const f=formatoPieza(a);if(f.tipo==="estatico")return`<span class="na">N/A (estático)</span>`;return ok(a[k])?fmtPct(a[k]):NA_REP}
+function porQue(x,rk,tipo){
+ const a=x.a,ref=rk.aggEleg.cpr;
+ if(x.sinResultado)return `Gastó ${fmtMoney(a.gasto)} con ${fmtInt(a.impresiones)} impresiones y no generó registros.`;
+ const r=x.cpr/ref;
+ if(tipo==="top")return `${fmtMoney(x.cpr)} por registro: ${fmtX(1/r)} más eficiente que el promedio de los anuncios en ranking (${fmtMoney(ref)}).`;
+ return `${fmtMoney(x.cpr)} por registro: ${fmtX(r)} el promedio de los anuncios en ranking (${fmtMoney(ref)}), con ${fmtInt(regs(a))} registros sobre ${fmtMoney(a.gasto)}.`;
+}
+function adCard(x,i,rk,tipo){
+ const a=x.a,f=formatoPieza(a);
+ return `<article class="ad"><span class="pos">${i+1}</span><div><div class="nm">${esc(a.anuncio)}</div><div class="ctx">${accTag(a.cuenta)} ${paisTag(a.pais)} <span>${esc(a.conjunto)}</span></div><div class="ctx" style="margin-top:2px">${esc(a.campana)}${x.sinResultado?` <span class="tag t-bad">Gasto sin resultado</span>`:""}</div></div>
+ <dl><div><dt>Inversión</dt><dd>${fmtMoney(a.gasto)}</dd></div><div><dt>Registros</dt><dd>${tieneResultado(a)?fmtInt(a.resultados):"0"}</dd></div><div><dt>Costo / registro</dt><dd>${x.sinResultado?"—":fmtMoney(x.cpr)}</dd></div><div><dt>CTR (todos)</dt><dd>${fmtPct(a.ctrTodos,true)}</dd></div><div><dt>CPM</dt><dd>${fmtMoney(a.cpm)}</dd></div><div><dt>Frecuencia</dt><dd>${fmtFreq(a.frecuencia)}</dd></div><div><dt>Hook Rate</dt><dd>${hookCell(a,"hookRate")}</dd></div><div><dt>Hold Rate</dt><dd>${hookCell(a,"holdRate")}</dd></div></dl>
+ <p class="why">${porQue(x,rk,tipo)}</p></article>`;
+}
+function renderFiltros(){
+ const mk=(id,vals,key)=>{$(id).insertAdjacentHTML("beforeend",[["","Todos"],...vals].map(([v,l])=>`<button class="chip" data-k="${key}" data-v="${v}" aria-pressed="${F[key]===v}">${l}</button>`).join(""))};
+ mk("#fPais",[["CR","CR"],["GT","GT"],["HN","HN"]],"pais");mk("#fCta",CU.map(c=>[c.k,c.k]),"cuenta");
+ document.querySelector(".filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;F[b.dataset.k]=b.dataset.v;renderAnuncios()});
+}
+const COLS=[["anuncio","Anuncio","l"],["cuenta","Cuenta","l"],["pais","País","l"],["grupo","Grupo","l"],["estado","Estado","l"],["gasto","Inversión"],["impresiones","Impresiones"],["registros","Registros"],["cpr","Costo / registro"],["ctrTodos","CTR (todos)"],["cpm","CPM"],["frecuencia","Frecuencia"],["clicsEnlace","Clics enlace"],["hookRate","Hook"],["holdRate","Hold"],["umbral","Ranking","l"]];
+function sortVal(a,k){if(k==="cpr")return tieneResultado(a)?a.gasto/a.resultados:Infinity;if(k==="registros")return regs(a);if(k==="grupo")return grupoCreativo(a).label;if(k==="umbral")return enUmbral(a)?0:1;if(k==="hookRate"||k==="holdRate")return formatoPieza(a).tipo==="estatico"?-1:(a[k]??-1);return a[k]??-Infinity}
+function renderAnuncios(){
+ document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",F[b.dataset.k]===b.dataset.v));
+ const rk=ranking(F),u=DATA.meta.umbral;
+ $("#ruleBox").innerHTML=`<b>KPI:</b> ${esc(DATA.meta.kpiRanking.descripcion)} · <b>Desempate:</b> ${esc(DATA.meta.kpiRanking.desempate)} · <b>Umbral:</b> gasto ≥ UYU ${NF0.format(u.gastoMin)}${CUR.code==="USD"?` (≈ ${fmtMoney(u.gastoMin)})`:""} y ≥ ${fmtInt(u.impresionesMin)} impresiones · <b>${rk.elegibles.length}</b> de ${rk.base.length} anuncios en el filtro pasan el umbral.`;
+ $("#top3").innerHTML=rk.top.length?rk.top.map((x,i)=>adCard(x,i,rk,"top")).join(""):`<div class="empty">Ningún anuncio con registros pasa el umbral en este filtro.</div>`;
+ $("#bot3").innerHTML=rk.bot.length?rk.bot.map((x,i)=>adCard(x,i,rk,"bot")).join(""):`<div class="empty">No hay suficientes anuncios en ranking para un Bottom 3 distinto del Top 3.</div>`;
+ const list=[...rk.base].sort((a,b)=>{const x=sortVal(a,SORT.k),y=sortVal(b,SORT.k);return (typeof x==="string"?x.localeCompare(y):x-y)*SORT.dir});
+ $("#adCount").textContent=`· ${list.length} anuncios`;
+ $("#tAds").innerHTML=`<thead><tr>${COLS.map(([k,l,al])=>`<th class="sort ${al||""}" data-k="${k}" aria-sort="${SORT.k===k?(SORT.dir>0?"ascending":"descending"):"none"}" tabindex="0">${l}</th>`).join("")}</tr></thead><tbody>${list.map(a=>{const g=grupoCreativo(a);return `<tr>
+ <td class="l wrapcell"><b style="font-weight:500">${esc(a.anuncio)}</b><div class="faint" style="font-size:11.5px">${esc(a.conjunto)}</div></td><td class="l">${accTag(a.cuenta)}</td><td class="l">${paisTag(a.pais)}</td><td class="l">${g.label}</td><td class="l">${a.estado==="active"?"Activo":`<span class="tag t-mut">Inactivo</span>`}</td>
+ <td class="num">${fmtMoney(a.gasto)}</td><td class="num">${fmtInt(a.impresiones)}</td><td class="num">${tieneResultado(a)?fmtInt(a.resultados):`<span class="faint">0</span>`}</td><td class="num">${tieneResultado(a)?fmtMoney(a.gasto/a.resultados):"—"}</td><td class="num">${fmtPct(a.ctrTodos,true)}</td><td class="num">${fmtMoney(a.cpm)}</td><td class="num">${fmtFreq(a.frecuencia)}${a.frecuencia>4?` <span class="tag t-warn">&gt; 4</span>`:""}</td>
+ <td class="num">${cuentasConClics.has(a.cuenta)?fmtInt(a.clicsEnlace??0):NA_REP}</td><td class="num">${hookCell(a,"hookRate")}</td><td class="num">${hookCell(a,"holdRate")}</td><td class="l">${enUmbral(a)?`<span class="tag t-good">✓ En ranking</span>`:`<span class="tag t-mut">Bajo umbral</span>`}</td></tr>`}).join("")}</tbody>`;
+}
+function bindSort(){
+ const go=th=>{const k=th.dataset.k;SORT=SORT.k===k?{k,dir:-SORT.dir}:{k,dir:["anuncio","cuenta","pais","grupo","estado","umbral","cpr"].includes(k)?1:-1};renderAnuncios()};
+ $("#tAds").addEventListener("click",e=>{const th=e.target.closest("th.sort");if(th)go(th)});
+ $("#tAds").addEventListener("keydown",e=>{const th=e.target.closest("th.sort");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();go(th)}});
+}
+
+/* ---- Creativo ---- */
+function renderCreativo(){
+ const m=agruparPor(ADS,a=>grupoCreativo(a).id);
+ const rows=GRUPOS.filter(g=>m.has(g.id)).map(g=>({g,...agregar(m.get(g.id)),fmts:[...new Set(m.get(g.id).map(a=>formatoPieza(a).label))]}));
+ const withCpr=rows.filter(r=>ok(r.cpr)).sort((a,b)=>a.cpr-b.cpr),max=Math.max(...withCpr.map(r=>r.cpr));
+ $("#hbCpr").innerHTML=withCpr.map(r=>`<div class="hbr"><span>${r.g.label}</span><div class="track" data-tip="<b>${r.g.label}</b>${fmtMoney(r.cpr)} por registro<br>${fmtMoney(r.gasto)} · ${fmtInt(r.registros)} registros · ${r.n} anuncios"><i style="width:${r.cpr/max*100}%"></i><span class="ref" style="left:${TOT.cpr/max*100}%"></span></div><span class="v">${fmtMoney(r.cpr)}</span></div>`).join("")+rows.filter(r=>!ok(r.cpr)).map(r=>`<div class="hbr"><span>${r.g.label}</span><span class="faint">Sin registros</span><span class="v">${fmtMoney(r.gasto)}</span></div>`).join("");
+ $("#hbNote").innerHTML=`La línea punteada marca el costo por registro consolidado (${fmtMoney(TOT.cpr)}). Menor es mejor.`;
+ $("#tGrp").innerHTML=`<thead><tr><th>Grupo</th><th>Anuncios</th><th>Inversión</th><th>Registros</th><th>Costo / reg.</th><th>CTR</th><th>Hook*</th><th>Hold*</th></tr></thead><tbody>${rows.sort((a,b)=>b.gasto-a.gasto).map(r=>`<tr><td>${r.g.label}<div class="faint" style="font-size:11px">${r.fmts.join(", ")}</div></td><td class="num">${r.n}</td><td class="num">${fmtMoney(r.gasto)}</td><td class="num">${fmtInt(r.registros)}</td><td class="num">${fmtMoney(r.cpr)}</td><td class="num">${fmtPct(r.ctr,true)}</td><td class="num">${ok(r.hook)?fmtPct(r.hook):`<span class="na">N/A (estático)</span>`}</td><td class="num">${ok(r.hold)?fmtPct(r.hold):`<span class="na">N/A (estático)</span>`}</td></tr>`).join("")}</tbody>`;
+ $("#tCls").innerHTML=`<thead><tr><th>Anuncio</th><th class="l">Cuenta</th><th class="l">País</th><th class="l">Grupo asignado</th><th class="l">Regla aplicada</th><th class="l">Formato</th><th class="l">Regla de formato</th></tr></thead><tbody>${[...ADS].sort((a,b)=>grupoCreativo(a).label.localeCompare(grupoCreativo(b).label)||a.cuenta.localeCompare(b.cuenta)).map(a=>{const g=grupoCreativo(a),f=formatoPieza(a);return `<tr><td class="l wrapcell">${esc(a.anuncio)}</td><td class="l">${accTag(a.cuenta)}</td><td class="l">${paisTag(a.pais)}</td><td class="l">${g.label}</td><td class="l faint">${g.regla}</td><td class="l">${f.tipo==="estatico"?`<span class="tag t-mut">${f.label}</span>`:f.label}</td><td class="l faint">${f.regla}</td></tr>`}).join("")}</tbody>`;
+}
+
+/* ---- Insights ---- */
+const findAd=(cuenta,anuncio)=>ADS.find(a=>a.cuenta===cuenta&&a.anuncio===anuncio);
+function renderInsights(){
+ const cr=PA.find(p=>p.k==="CR"),gt=PA.find(p=>p.k==="GT"),hn=PA.find(p=>p.k==="HN");
+ const combos=comboList();const cb=(c,p)=>combos.find(x=>x.cuenta===c&&x.pais===p);
+ const m=agruparPor(ADS,a=>grupoCreativo(a).id);const G=id=>m.has(id)?agregar(m.get(id)):null;
+ const inf=G("influencers"),iph=G("iphone"),pla=G("placas");
+ const fat=ADS.filter(a=>a.frecuencia>4&&enUmbral(a));
+ const bajo=ADS.filter(a=>!enUmbral(a)),bajoAgg=agregar(bajo),cero=ADS.filter(a=>!tieneResultado(a)),ceroAgg=agregar(cero);
+ const cpms=PA.map(p=>`${p.k} ${fmtMoney(p.cpm)}`).join(" · ");
+ const gtInf=(m.get("influencers")||[]).filter(a=>a.pais!=="CR").length;
+ const placaGT=findAd("P321","API (CAM) GT - placa GT"),packGT=findAd("P287","API (CAM) GT - PackBienvenida 3");
+ const k5=findAd("P321","AD 5 KEYLA Registro desde el sillón"),k6=findAd("P321","AD 6 KEYLA Tips para empezar"),e3=findAd("P321","AD 3 ERICKA Bono de bienvenida y código - Copia");
+ const iph1=findAd("P282","AD 1"),gen2=findAd("P287","API (CAM) CR - AD 2 GENERAL"),hnB=findAd("P321","API (CAM) HN - plca bnda");
+ const cprA=a=>tieneResultado(a)?a.gasto/a.resultados:null;
+ const datos=[
+  `CR: ${fmtPct(share(cr.gasto,TOT.gasto))} del gasto y ${fmtPct(share(cr.registros,TOT.registros))} de los registros. GT: ${fmtPct(share(gt.gasto,TOT.gasto))} y ${fmtPct(share(gt.registros,TOT.registros))}. HN: ${fmtPct(share(hn.gasto,TOT.gasto))} y ${fmtPct(share(hn.registros,TOT.registros))}.`,
+  `Costo por registro por país: CR ${fmtMoney(cr.cpr)}, HN ${fmtMoney(hn.cpr)}, GT ${fmtMoney(gt.cpr)}.`,
+  `CPM por país: ${cpms}. El CPM más alto por anuncio en ranking fue ${(()=>{const t=[...ADS.filter(enUmbral)].sort((a,b)=>b.cpm-a.cpm)[0];return `«${esc(t.anuncio)}» (${t.cuenta} ${t.pais}) con ${fmtMoney(t.cpm)}`})()}.`,
+  `Influencers: ${fmtMoney(inf.gasto)} y ${fmtInt(inf.registros)} registros (${fmtMoney(inf.cpr)} por registro). iPhone: ${fmtMoney(iph.gasto)} y ${fmtInt(iph.registros)} registros (${fmtMoney(iph.cpr)}).`,
+  fat.length?`Anuncios en ranking con frecuencia mayor a 4: ${fat.map(a=>`«${esc(a.anuncio)}» (${a.cuenta} ${a.pais}, ${fmtFreq(a.frecuencia)})`).join(", ")}.`:`Ningún anuncio en ranking supera frecuencia 4.`,
+  `${cero.length} anuncios sin registros sumaron ${fmtMoney(ceroAgg.gasto)}; ${bajo.length} anuncios bajo el umbral sumaron ${fmtMoney(bajoAgg.gasto)} (${fmtPct(share(bajoAgg.gasto,TOT.gasto))} del gasto).`];
+ const insights=[
+  `El gasto y los resultados están desalineados: GT recibe casi un tercio de la inversión y aporta menos de un décimo de los registros, mientras CR aporta más de 4 de cada 5 registros.`,
+  `Los anuncios de influencers son el grupo más eficiente de la semana y aportan ${fmtPct(share(inf.registros,cr.registros))} de los registros de CR, lo que explica buena parte de su bajo costo. Ocupan los ${Math.min(3,ranking({pais:"",cuenta:""}).top.filter(x=>grupoCreativo(x.a).id==="influencers").length)} primeros puestos del ranking general.`,
+  `En GT, la pieza «API (CAM) GT - placa GT» de P321 concentra ${fmtMoney(placaGT.gasto)} (${fmtPct(share(placaGT.gasto,gt.gasto))} del gasto del país) a ${fmtMoney(cprA(placaGT))} por registro. «PackBienvenida 3» de P287, en el mismo país, registra a ${fmtMoney(cprA(packGT))}.`,
+  `Los anuncios iPhone captan atención (Hook Rate de video ${fmtPct(iph.hook)}) pero convierten caro: ${fmtMoney(iph.cpr)} por registro.`,
+  `La misma pieza rinde distinto según la cuenta: «AD 6 KEYLA Tips para empezar» cuesta ${fmtMoney(cprA(k6))} por registro en P321 y ${fmtMoney(cprA(findAd("P282","AD 6 KEYLA Tips para empezar")))} en P282.`];
+ const hip=[
+  `La diferencia de costo entre CR y GT podría deberse más al tipo de creativo que al mercado: GT ${gtInf?"tiene":"no tiene"} anuncios de influencers esta semana. <em>No comprobable sin una prueba con influencers en GT.</em>`,
+  `«API (CAM) HN - plca bnda» tiene frecuencia ${fmtFreq(hnB.frecuencia)}, la más alta de la semana; podría haber fatiga creativa. <em>Sin desglose diario no se puede ver si el costo subió durante la semana.</em>`,
+  `El costo alto de iPhone podría venir de un desajuste entre la promesa del anuncio y la landing o el registro. <em>Requiere revisar la landing y el flujo; no está en los datos.</em>`,
+  `Las diferencias de una misma pieza entre P282 y P321 podrían deberse a la segmentación o al aprendizaje de cada conjunto. <em>Los reportes no incluyen segmentación.</em>`];
+ const R=[];
+ if(k5&&k6)R.push([`Escalar «AD 5 KEYLA Registro desde el sillón» y «AD 6 KEYLA Tips para empezar»`,`P321 · CR`,`${fmtMoney(cprA(k5))} y ${fmtMoney(cprA(k6))} por registro, frecuencia ${fmtFreq(k5.frecuencia)} y ${fmtFreq(k6.frecuencia)}: hay margen antes de la fatiga. Subir presupuesto de forma gradual y revisar el costo a mitad de semana.`]);
+ if(placaGT&&packGT)R.push([`Mover presupuesto en GT de «placa GT» hacia «PackBienvenida 3»`,`P321 GT → P287 GT`,`${fmtMoney(cprA(placaGT))} contra ${fmtMoney(cprA(packGT))} por registro en el mismo país; «placa GT» usó ${fmtMoney(placaGT.gasto)}.`]);
+ const gtBest=combos.filter(c=>c.pais==="GT"&&ok(c.cpr)).sort((a,b)=>a.cpr-b.cpr)[0];
+ R.push([`Probar una pieza de influencers en GT`,`GT · ${gtBest.cuenta} (mejor costo en GT: ${fmtMoney(gtBest.cpr)})`,`Influencers registran a ${fmtMoney(inf.cpr)} en CR y GT no tiene piezas de ese tipo. Medir contra «PackBienvenida 3».`]);
+ if(iph1)R.push([`Pausar «AD 1» del conjunto iPhone`,`P282 · CR`,`${fmtMoney(cprA(iph1))} por registro (${fmtInt(iph1.resultados)} registros con ${fmtMoney(iph1.gasto)}), el peor costo del ranking.`]);
+ if(gen2)R.push([`Pausar o reemplazar «AD 2 GENERAL»`,`P287 · CR`,`${fmtMoney(gen2.gasto)} y ${fmtInt(gen2.impresiones)} impresiones sin registros.`]);
+ if(hnB)R.push([`Rotar el creativo de «HN - plca bnda»`,`P321 · HN`,`Frecuencia ${fmtFreq(hnB.frecuencia)} con ${fmtMoney(hnB.gasto)} de gasto (${fmtPct(share(hnB.gasto,hn.gasto))} de HN). Agregar una pieza nueva sin apagar la actual hasta comparar.`]);
+ R.push([`Limpiar anuncios con gasto mínimo`,`Las tres cuentas`,`${bajo.length} anuncios bajo el umbral suman ${fmtMoney(bajoAgg.gasto)}; ${bajo.filter(a=>a.estado!=="active").length} están inactivos y ${bajo.filter(a=>!tieneResultado(a)).length} no tienen registros. Pausar los activos sin registros y archivar duplicados.`]);
+ CU.filter(c=>!cuentasConClics.has(c.k)).forEach(c=>R.push([`Agregar «Clics en el enlace» a la exportación de ${c.k}`,c.k,`Sin esa columna, ${fmtPct(share(c.gasto,TOT.gasto))} del gasto queda fuera del embudo y del CPC de enlace.`]));
+
+ const blk=(cls,k,t,items,ordered)=>`<div class="ib ${cls}"><header><span class="k">${k}</span><h3 style="margin:0">${t}</h3></header>${ordered?"<ol>":"<ul>"}${items.join("")}${ordered?"</ol>":"</ul>"}</div>`;
+ $("#insBlocks").innerHTML=
+  blk("dato","Datos","Lo que dicen los números",datos.map(t=>`<li>${t}</li>`))+
+  blk("insight","Insights","La interpretación",insights.map(t=>`<li>${t}</li>`))+
+  blk("hip","Hipótesis","Causas posibles, no comprobadas",hip.map(t=>`<li>${t}</li>`))+
+  blk("rec","Recomendaciones","Semana del 19 al 25 de octubre",R.map(([w,where,why])=>`<li><span class="what">${w}</span> <span class="tag t-mut">${where}</span><span class="meta">${why}</span></li>`),true);
+}
+
+/* ---- Verificación ---- */
+function renderVerificacion(){
+ const C=DATA.meta.controlExcel;
+ const row=(lab,calc,ref,f)=>{const okv=Math.abs(calc-ref)<0.005;return `<tr><td>${lab}</td><td class="num">${f(calc)}</td><td class="num">${f(ref)}</td><td class="${okv?"ok":"ko"}">${okv?"✓ Coincide":"✗ Diferencia"}</td></tr>`};
+ const money2=fmtUYU;
+ let h=`<thead><tr><th>Ámbito</th><th>Calculado</th><th>Suma del Excel</th><th class="l">Estado</th></tr></thead><tbody>`;
+ CU.forEach(c=>{const x=C.porCuenta[c.k];h+=row(`${c.k} · inversión`,c.gasto,x.gasto,money2)+row(`${c.k} · registros`,c.registros,x.registros,fmtInt)+row(`${c.k} · filas`,c.n,x.filas,fmtInt)});
+ h+=row(`<b>Consolidado · inversión</b>`,TOT.gasto,C.total.gasto,money2)+row(`<b>Consolidado · registros</b>`,TOT.registros,C.total.registros,fmtInt)+`</tbody>`;
+ $("#tVer").innerHTML=h;
+ const cr=PA.find(p=>p.k==="CR"),p287=CU.find(c=>c.k==="P287"),ad=findAd("P321","AD 6 KEYLA Tips para empezar");
+ const M=C.manuales;
+ $("#tChk").innerHTML=`<thead><tr><th>Comprobación</th><th>Calculado</th><th>Excel</th><th class="l">Estado</th></tr></thead><tbody>
+  ${row("País CR · costo por registro",cr.cpr,M.paisCR.cpr,money2)}${row("País CR · CPM",cr.cpm,M.paisCR.cpm,money2)}
+  ${row("Cuenta P287 · costo por registro",p287.cpr,M.cuentaP287.cpr,money2)}${row("Cuenta P287 · CPC de enlace",p287.cpcEnlace,M.cuentaP287.cpcEnlace,money2)}
+  ${row("Anuncio P321 «AD 6 KEYLA Tips» · costo por registro",ad.gasto/ad.resultados,M.anuncio.costoPorResultadoExcel,money2)}${row("Anuncio P321 «AD 6 KEYLA Tips» · CPM",ad.gasto/ad.impresiones*1000,M.anuncio.cpmExcel,money2)}
+  <tr><td colspan="4" class="faint" style="white-space:normal">El mismo nombre existe en P282 (${fmtMoney(findAd("P282","AD 6 KEYLA Tips para empezar").gasto)}); se verificó que son filas separadas. ${C.clavesDuplicadas===0?"0 claves cuenta + campaña + conjunto + anuncio duplicadas.":C.clavesDuplicadas+" claves duplicadas."}</td></tr></tbody>`;
+ $("#lims").innerHTML=DATA.meta.limitaciones.map(l=>`<li>${esc(l)}</li>`).join("");
+ const tc=DATA.meta.tipoCambio;
+ $("#sups").innerHTML=DATA.meta.supuestos.map(l=>`<li>${esc(l)}</li>`).join("")+`<li>Tipo de cambio: ${esc(tc.fuente)} · <a href="${tc.url}" target="_blank" rel="noopener">fuente</a></li>`+DATA.meta.versiones.map(v=>`<li>Actualización ${esc(v.fecha)}: ${esc(v.nota)}</li>`).join("")+DATA.meta.archivos.map(f=>`<li class="mono" style="font-size:12px">${esc(f.cuenta)}: ${esc(f.archivo)} · hoja «${esc(f.hoja)}» · ${f.filas} filas</li>`).join("");
+}
+
+/* ---- Tooltip ---- */
+function bindTip(){
+ const tip=$("#tip");
+ document.addEventListener("mousemove",e=>{const t=e.target.closest("[data-tip]");if(!t){tip.classList.remove("on");return}tip.innerHTML=t.dataset.tip;tip.classList.add("on");const w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=x+"px";tip.style.top=y+"px"});
+ document.addEventListener("scroll",()=>tip.classList.remove("on"),{passive:true});
+}
+
+function renderContent(){
+ try{renderKPIs();renderDist();renderFunnel();renderWeekPts();renderPais();renderCuenta();renderAnuncios();renderCreativo();renderInsights();renderVerificacion()}
+ catch(err){console.error(err);document.querySelector(".wrap").insertAdjacentHTML("afterbegin",`<div class="card" style="margin-top:20px;border-color:var(--bad)">Error al calcular: ${esc(err.message)}</div>`)}
+}
+function renderAll(){
+ try{renderHeader();renderFiltros();bindSort();bindTip();renderContent()}
+ catch(err){console.error(err);document.querySelector(".wrap").insertAdjacentHTML("afterbegin",`<div class="card" style="margin-top:20px;border-color:var(--bad)">Error al calcular: ${esc(err.message)}</div>`)}
+}
+renderAll();
+</script>
+
+</body></html>

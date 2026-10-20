@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AlertTriangle, ChevronDown, Download, Info, Search } from "lucide-react";
+import { ChevronDown, Download, Search } from "lucide-react";
 import { control, PAISES, PERIODO_LABEL, resultados, yJoin } from "@/lib/pauta";
 import { formatInt, formatMoney } from "@/lib/format";
 import { Flag } from "../Flag";
