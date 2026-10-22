@@ -142,6 +142,15 @@ Réplica completa del dashboard **"Pauta Octubre Azar Latino"** (Meta Ads, 1–1
 - Mismo criterio que el original: semana 1 = 5–11 oct (7 días), semana 2 = 12–16 oct (5 días); las variaciones usan la base comparable (cuentas con consumo en ambas semanas). P345 empezó el 12 de octubre: suma en los totales y en el promedio diario de la semana 2, y además se muestra el ritmo "con P345".
 - Para actualizarla con reportes nuevos, reemplaza `data/pauta-octubre.json` con la misma estructura y vuelve a desplegar.
 
+### Presupuesto vs consumo (Consumo Octubre)
+
+El presupuesto mensual de CAM por país está en `data/presupuesto-octubre.json`: CR 60 % (US$15,000 / $U603,600), GT 30 % (US$7,500 / $U301,800) y HN 10 % (US$2,500 / $U100,600), con un total de US$25,000 / $U1,006,000 a 40.24 UYU por dólar. La sección muestra:
+- el gasto contra el presupuesto en dólares y en pesos;
+- el % ejecutado frente al ritmo esperado del mes;
+- el disponible y la proyección al 31 de octubre.
+
+El consumo en USD se convierte con la tasa del presupuesto. Responde a los filtros de país, cuenta y tipo; el de periodo no aplica, porque el presupuesto es mensual. Para cambiar el presupuesto, edita ese JSON.
+
 ## Pestaña "Reporte Octubre 2026" (`/analisis-semanal`)
 
 Las pestañas del dashboard son: **Fondeos** (`/`), **Consumo Octubre** (`/pauta`) y **Reporte Octubre 2026** (`/analisis-semanal`).

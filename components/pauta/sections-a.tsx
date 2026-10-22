@@ -173,7 +173,7 @@ export function Semanal({ c, dark }: { c: PautaCtx; dark: boolean }) {
   return (
     <Section
       id="semanal"
-      n={2}
+      n={3}
       title="Comparativo semana 1 vs semana 2"
       subtitle="Semana 1 tiene 7 días; semana 2 tiene 5 días reales (12–16 oct). Por eso se compara el total y también el promedio diario. Solo entran perfiles con reporte en las dos semanas."
     >
@@ -414,7 +414,7 @@ export function PorPais({ c, onPais }: { c: PautaCtx; onPais: (p: string) => voi
     </tr>
   );
   return (
-    <Section id="pais" n={3} title="Consumo por país" subtitle="País tomado del nombre de campaña (API (CAM) CR / GT / HN, TRAFICO CR / GT) y, si la campaña no lo dice, del archivo y la etiqueta del perfil.">
+    <Section id="pais" n={4} title="Consumo por país" subtitle="País tomado del nombre de campaña (API (CAM) CR / GT / HN, TRAFICO CR / GT) y, si la campaña no lo dice, del archivo y la etiqueta del perfil.">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <Panel
           title={`${ML} por país · ${PERIODO_LABEL[f.periodo]}`}
@@ -499,7 +499,7 @@ export function PorCuenta({ c, onCuenta }: { c: PautaCtx; onCuenta: (x: string) 
   rows.sort(sorters[sortBy]);
   const ma = Math.max(1, ...rows.map((r) => r.s.get(f.periodo)));
   return (
-    <Section id="cuenta" n={4} title="Consumo por cuenta" subtitle="Un perfil por fila. País = países con consumo en sus campañas. Clic en una fila para filtrar.">
+    <Section id="cuenta" n={5} title="Consumo por cuenta" subtitle="Un perfil por fila. País = países con consumo en sus campañas. Clic en una fila para filtrar.">
       <Panel
         right={
           <label className="flex items-center gap-2 text-xs text-muted">

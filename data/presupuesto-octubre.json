@@ -1,0 +1,13 @@
+{
+  "titulo": "Presupuesto CAM por país · octubre 2026",
+  "mes": "2026-10",
+  "desde": "2026-10-01",
+  "hasta": "2026-10-31",
+  "tipoCambio": { "uyuPorUsd": 40.24, "referencia": "1 USD = 40.24 UYU (tabla de presupuesto)" },
+  "paises": [
+    { "pais": "Costa Rica", "distribucion": 0.6, "usd": 15000, "uyu": 603600 },
+    { "pais": "Guatemala", "distribucion": 0.3, "usd": 7500, "uyu": 301800 },
+    { "pais": "Honduras", "distribucion": 0.1, "usd": 2500, "uyu": 100600 }
+  ],
+  "total": { "usd": 25000, "uyu": 1006000 }
+}

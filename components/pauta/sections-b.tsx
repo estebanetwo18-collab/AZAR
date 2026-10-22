@@ -17,7 +17,7 @@ export function CuentasCam({ c, dark }: { c: PautaCtx; dark: boolean }) {
   const CT = S(f.pais, f.cuenta, "CAM");
   const grand = S("all", "all", "all");
   return (
-    <Section id="cam" n={5} title="Detalle de cuentas CAM" subtitle="Cuentas CAM con campañas en varios países, separadas por país.">
+    <Section id="cam" n={6} title="Detalle de cuentas CAM" subtitle="Cuentas CAM con campañas en varios países, separadas por país.">
       {f.tipo === "Individual" || camCuentas.length === 0 ? (
         <div className="card p-6 text-sm text-muted">El filtro actual no incluye cuentas CAM.</div>
       ) : (
@@ -148,7 +148,7 @@ export function Metricas({ c }: { c: PautaCtx }) {
   return (
     <Section
       id="metricas"
-      n={6}
+      n={7}
       title="Métricas comunes a todos los perfiles"
       subtitle={`Presentes en todos los archivos: consumo e impresiones. CPM calculado = consumo ÷ impresiones × 1,000. Semana 1 y 2 en base comparable (${yJoin(comp)}); Total = ${PERIODO_LABEL[f.periodo]}, todos los perfiles del filtro.`}
     >
@@ -201,7 +201,7 @@ const DISPONIBILIDAD = [
 export function NoComparables({ c }: { c: PautaCtx }) {
   const res = resultados(c.rows, c.f.currency, c.rate);
   return (
-    <Section id="nocomp" n={7} title="Datos no comparables" subtitle="Indicadores que existen solo en algunos perfiles. No entran al análisis principal.">
+    <Section id="nocomp" n={8} title="Datos no comparables" subtitle="Indicadores que existen solo en algunos perfiles. No entran al análisis principal.">
       <div className="grid gap-4">
         <Panel title="Resultados reportados" subtitle="Solo P287 y las cuentas individuales traen resultados, con tipos distintos (registros vs visitas a la página): no se suman entre sí. P282 y P321 no traen resultados.">
           <Table
@@ -292,7 +292,7 @@ export function Consolidado({ c }: { c: PautaCtx }) {
     URL.revokeObjectURL(a.href);
   };
   return (
-    <Section id="consolidado-sec" n={8} title="Tabla consolidada" subtitle="Todas las filas usadas, sin duplicados, con su archivo y fila de origen. Responde a los filtros.">
+    <Section id="consolidado-sec" n={9} title="Tabla consolidada" subtitle="Todas las filas usadas, sin duplicados, con su archivo y fila de origen. Responde a los filtros.">
       <Panel
         title={`${formatInt(rows.length)} filas`}
         right={
@@ -380,7 +380,7 @@ export function Auditoria({ c }: { c: PautaCtx }) {
   const registro = c.data.auditoria.filter((n) => ["Info", "Confirmado", "Corrección"].includes(n.categoria));
   const u = (v: number) => formatMoney(v, "UYU");
   return (
-    <Section id="auditoria-sec" n={9} title="Auditoría de datos" subtitle="Qué se procesó, qué se excluyó y cómo se calculó.">
+    <Section id="auditoria-sec" n={10} title="Auditoría de datos" subtitle="Qué se procesó, qué se excluyó y cómo se calculó.">
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
         {(
           [
@@ -489,7 +489,7 @@ export function Actualizar() {
     "Revisa la sección de auditoría antes de compartir: ahí aparecen duplicados, faltantes y supuestos nuevos.",
   ];
   return (
-    <Section id="actualizar" n={10} title="Cómo actualizar con nuevos reportes">
+    <Section id="actualizar" n={11} title="Cómo actualizar con nuevos reportes">
       <Panel>
         <ol className="space-y-3">
           {pasos.map((p, i) => (

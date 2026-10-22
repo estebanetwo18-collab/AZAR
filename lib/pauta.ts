@@ -55,7 +55,19 @@ export interface AuditNote {
   detalle: string;
 }
 
+/** Presupuesto mensual de CAM por país (USD y UYU, con su propia tasa). */
+export interface Presupuesto {
+  titulo: string;
+  mes: string;
+  desde: string;
+  hasta: string;
+  tipoCambio: { uyuPorUsd: number; referencia: string };
+  paises: { pais: string; distribucion: number; usd: number; uyu: number }[];
+  total: { usd: number; uyu: number };
+}
+
 export interface PautaPayload {
+  presupuesto: Presupuesto;
   titulo: string;
   corte: string;
   moneda: "UYU";

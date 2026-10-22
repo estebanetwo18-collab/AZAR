@@ -11,11 +11,13 @@ import { DashboardSkeleton, ErrorState } from "../states";
 import { Segmented, cn } from "../ui";
 import { buildCtx } from "./context";
 import { countryKeyOf } from "./parts";
+import { PresupuestoVsConsumo } from "./presupuesto";
 import { PorCuenta, PorPais, Resumen, Semanal } from "./sections-a";
 import { Actualizar, Auditoria, Consolidado, CuentasCam, Metricas, NoComparables } from "./sections-b";
 
 const NAV = [
   ["resumen", "Resumen"],
+  ["presupuesto", "Presupuesto"],
   ["semanal", "Semana 1 vs semana 2"],
   ["pais", "Por país"],
   ["cuenta", "Por cuenta"],
@@ -145,7 +147,7 @@ export function PautaDashboard() {
 
   return (
     <div className="min-h-screen">
-      <Header subtitle="Meta Ads · Pauta de octubre (1–16 oct 2026)" dark={dark} onToggleTheme={toggle}>
+      <Header subtitle="Meta Ads · Consumo de octubre (1–16 oct 2026)" dark={dark} onToggleTheme={toggle}>
         {ctx && <Filters f={f} set={set} cuentas={ctx.cuentas} onReset={() => setF({ ...DEFAULT_PAUTA_FILTERS, currency: f.currency })} />}
       </Header>
 
@@ -164,6 +166,7 @@ export function PautaDashboard() {
             <span className="rounded-full bg-azar-50 px-3 py-1 text-azar ring-1 ring-azar/20 dark:bg-azar/15">Semana 2 parcial: 12–16 oct</span>
           </div>
           <Resumen c={ctx} />
+          <PresupuestoVsConsumo c={ctx} dark={dark} />
           <Semanal c={ctx} dark={dark} />
           <PorPais c={ctx} onPais={(p) => set({ pais: f.pais === p ? "all" : p })} />
           <PorCuenta c={ctx} onCuenta={(x) => set({ cuenta: f.cuenta === x ? "all" : x })} />
