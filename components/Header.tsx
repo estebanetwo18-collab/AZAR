@@ -33,9 +33,9 @@ const iconBtn =
   "inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/80 transition hover:bg-white/[0.12] hover:text-white";
 
 const TABS = [
-  { href: "/", label: "Recargas" },
-  { href: "/pauta", label: "Pauta Octubre" },
-  { href: "/analisis-semanal", label: "Análisis semanal" },
+  { href: "/", label: "Fondeos" },
+  { href: "/pauta", label: "Consumo Octubre" },
+  { href: "/analisis-semanal", label: "Reporte Octubre 2026" },
 ];
 
 export function Header({ meta, refreshing = false, onRefresh, subtitle = "Meta Ads · Centroamérica", dark, onToggleTheme, children }: Props) {

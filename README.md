@@ -133,7 +133,7 @@ npm run start      # servir el build
 npm run typecheck  # verificación de tipos
 ```
 
-## Sección "Pauta Octubre" (`/pauta`)
+## Pestaña "Consumo Octubre" (`/pauta`)
 
 Réplica completa del dashboard **"Pauta Octubre Azar Latino"** (Meta Ads, 1–16 oct 2026), con sus 10 partes: resumen ejecutivo, semana 1 vs semana 2, consumo por país, por cuenta, detalle de cuentas CAM, métricas comunes, datos no comparables, tabla consolidada, auditoría y cómo actualizar.
 
@@ -142,7 +142,9 @@ Réplica completa del dashboard **"Pauta Octubre Azar Latino"** (Meta Ads, 1–1
 - Mismo criterio que el original: semana 1 = 5–11 oct (7 días), semana 2 = 12–16 oct (5 días); las variaciones usan la base comparable (cuentas con consumo en ambas semanas). P345 empezó el 12 de octubre: suma en los totales y en el promedio diario de la semana 2, y además se muestra el ritmo "con P345".
 - Para actualizarla con reportes nuevos, reemplaza `data/pauta-octubre.json` con la misma estructura y vuelve a desplegar.
 
-## Pestaña "Análisis semanal" (`/analisis-semanal`)
+## Pestaña "Reporte Octubre 2026" (`/analisis-semanal`)
+
+Las pestañas del dashboard son: **Fondeos** (`/`), **Consumo Octubre** (`/pauta`) y **Reporte Octubre 2026** (`/analisis-semanal`).
 
 Análisis semanal de Meta Ads (P282, P287 y P321 · CR, GT y HN · objetivo «Registros completados en el sitio web»), reconstruido desde la referencia aprobada `referencias/analisis-semanal-2026-10-12.html`. Tiene 7 secciones con sub-navegación: Resumen, Por país, Por cuenta, Anuncios (Top 3 / Bottom 3 y tabla completa), Creativo, Insights y Verificación.
 

@@ -117,7 +117,7 @@ export function AnalisisSemanal() {
 
   return (
     <div className="min-h-screen">
-      <Header subtitle={`Meta Ads · Análisis semanal${meta ? ` ${meta.semana.etiqueta}` : ""}`} dark={dark} onToggleTheme={toggle}>
+      <Header subtitle={`Meta Ads · Reporte Octubre 2026 · semana${meta ? ` ${meta.semana.etiqueta}` : ""}`} dark={dark} onToggleTheme={toggle}>
         {payload && meta && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
